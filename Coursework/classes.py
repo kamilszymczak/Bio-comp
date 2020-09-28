@@ -4,6 +4,8 @@ import numpy as np
 # Enumerated activation functions
 ActivationFunction = Enum('Activation_function', 'NULL SIGMOID HYPERBOLIC_TANGENT COSINE GAUSSIAN')
 
+LayerConnection = Enum('LayerConnection', 'FULL SPARSE')
+
 class ANN:
     """Artificial Neural Network(ANN) class.
     Use to build and run your ANN."""
@@ -13,8 +15,7 @@ class ANN:
         # TODO: determine structure of layers (e.g. type like: List[Layer])
         self.layers = []
         # TODO: Determine stucture of input (e.g. type like: np.ndarray[float64])
-        self.inputs = []
-        self.activation_function = ActivationFunction.NULL   
+        self.inputs = []   
 
     def set_activation_func(self, af: ActivationFunction) -> None:
         """Define the activation function the neurons in this network will use, defaults to NULL."""
@@ -51,15 +52,22 @@ class ANN:
         return None
 
     # TODO: figure out more functionality for ANN
+    # Might be cool to implement some form of pruning, (remove weights close to 0)
+    # Or quantization (convert tree from float64 to something like float 8 or smaller)
 
 class Layer:
     """Layer class for use in ANN"""
     def __init__(self) -> None:
         self.neurons = []
+        self.activation_function = ActivationFunction.NULL
 
     """Adds a `neuron` `num_add` times to the layer"""
     def add_neuron(self, num_add, neruon) -> None:
         return None
+
+    def set_activation_func(self, af: ActivationFunction) -> None:
+        """Define the activation function the neurons in this network will use, defaults to NULL."""
+        self.activation_function = af
 
     # TODO: figure out more functionality for Layer
 

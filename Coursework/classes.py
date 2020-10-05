@@ -1,5 +1,6 @@
 from enum import Enum
 import numpy as np
+from data import Data
 
 # Enumerated activation functions
 ActivationFunction = Enum('ActivationFunction', 'NULL SIGMOID HYPERBOLIC_TANGENT COSINE GAUSSIAN')

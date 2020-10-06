@@ -43,6 +43,15 @@ class ANN:
             temp_weights = temp_weights + [__weight_matrix__(neuron_definition[i-1], neuron_definition[i])]
         self.weights = temp_weights
 
+    def layer_output(self, neurons_matrix, weights_matrix):
+        """Return a numpy array of layer output, input for next layer's neurons
+
+        :param neurons_matrix: matrix of all neurons from previous layer
+        :type neurons_matrix: numpy.ndarray
+        :param weights_matrix: matrix of weights
+        :type weights_matrix: numpy.ndarray
+        """
+        return np.dot(neurons_matrix, weights_matrix)
 
     
         

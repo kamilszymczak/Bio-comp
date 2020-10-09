@@ -38,12 +38,12 @@ def __calculate_one_layer__(input_matrix, weight_matrix, bias):
     return out
 
 def __apply_activation__(weighted_sum, activation_func):
-    """[summary]
+    """Apply activation function to matrix
 
-    :param weighted_sum: [description]
-    :type weighted_sum: [type]
-    :param activation_func: [description]
-    :type activation_func: [type]
+    :param weighted_sum: The matrix of the sum of input * weight + bias
+    :type weighted_sum: numpy.ndarray
+    :param activation_func: The activation function identifier
+    :type activation_func: Enum.ActivationFunction
     """
     af = __pick_activation__(activation_func)
     if af == None:
@@ -87,6 +87,13 @@ def __relu__(z):
     return z if z > 0 else 0
     
 def __pick_activation__(activation):
+    """Select activation function to use
+
+    :param activation: The activation function identifier
+    :type activation: Enum.ActivationFunction
+    :return: reference to the activation function defintion
+    :rtype: fn
+    """
     activation_picker = {
         ActivationFunction.NULL: __null__,
         ActivationFunction.SIGMOID: __sigmoid__,
@@ -110,6 +117,7 @@ def __enumerate_activation__(activation_string):
         "null": ActivationFunction.NULL,
         "sigmoid": ActivationFunction.SIGMOID,
         "hyperbolictangent": ActivationFunction.HYPERBOLIC_TANGENT,
+        "tan": ActivationFunction.HYPERBOLIC_TANGENT,
         "cosine": ActivationFunction.COSINE,
         "gaussian": ActivationFunction.GAUSSIAN,
         "relu": ActivationFunction.RELU

@@ -25,11 +25,11 @@ def __calculate_one_layer__(input_matrix, weight_matrix, bias):
     :return: Returns the output of each neuron in the layer
     :rtype: numpy.ndarray
     """
-    if not (input_matrix.shape[1] == weight_matrix.shape[0]):
-        raise Exception("The number of columns in the input_matrix must equal the number of rows in the weight_matrix.")
+    #if not (input_matrix.shape[1] == weight_matrix.shape[0]):
+    #    raise Exception("The number of columns in the input_matrix must equal the number of rows in the weight_matrix.")
     
-    if not (bias.shape[0] == weight_matrix.shape[1]):
-        raise Exception("The number of elements in the bias vector should be the same as the number of columns in the weigth matrix.")
+    #if not (bias.shape[0] == weight_matrix.shape[1]):
+    #    raise Exception("The number of elements in the bias vector should be the same as the number of columns in the weigth matrix.")
     out_vec = np.dot(input_matrix, weight_matrix)
     out_vec = out_vec + bias
     return out_vec
@@ -74,6 +74,7 @@ class ANN:
             raise Exception("The ANN needs at least 1 hidden and 1 output layer.")
         self.__generate_weights__()
         self.compiled = True
+        print("Model Compiled!")
 
     def epoch(self, input_matrix):
         """One epoch of the Neural Network

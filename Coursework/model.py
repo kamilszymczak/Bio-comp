@@ -1,5 +1,8 @@
 import numpy as np
 import inspect
+import enum
+
+ActivationFunction = enum.Enum('ActivationFunction', 'NULL SIGMOID HYPERBOLIC_TANGENT COSINE GAUSSIAN RELU')
 
 def __weight_matrix__(x, y):
         """Return a numpy array of random weights with the specified size
@@ -25,14 +28,93 @@ def __calculate_one_layer__(input_matrix, weight_matrix, bias):
     :return: Returns the output of each neuron in the layer
     :rtype: numpy.ndarray
     """
-    #if not (input_matrix.shape[1] == weight_matrix.shape[0]):
-    #    raise Exception("The number of columns in the input_matrix must equal the number of rows in the weight_matrix.")
+    if not (input_matrix.shape[1] == weight_matrix.shape[0]):
+        raise Exception("The number of columns in the input_matrix must equal the number of rows in the weight_matrix.")
     
-    #if not (bias.shape[0] == weight_matrix.shape[1]):
-    #    raise Exception("The number of elements in the bias vector should be the same as the number of columns in the weigth matrix.")
-    out_vec = np.dot(input_matrix, weight_matrix)
-    out_vec = out_vec + bias
-    return out_vec
+    if not (bias.shape[0] == weight_matrix.shape[1]):
+        raise Exception("The number of elements in the bias vector should be the same as the number of columns in the weigth matrix.")
+    out = np.dot(input_matrix, weight_matrix)
+    out = out + bias
+    return out
+
+def __apply_activation__(weighted_sum, activation_func):
+    """[summary]
+
+    :param weighted_sum: [description]
+    :type weighted_sum: [type]
+    :param activation_func: [description]
+    :type activation_func: [type]
+    """
+    af = __pick_activation__(activation_func)
+    if af == None:
+        raise Exception("Invalid activation function")
+    return af(weighted_sum)
+
+# TODO: IMPLEMENT FUNCTION
+def __null__(z):
+    return z
+
+def __sigmoid__(z):
+    """Applies sigmoid activation function
+
+    :param z: The matrix of weighted sum values for each neuron
+    :type z: numpy.ndarray
+    :return: The matrix with sigmoid applied to each element
+    :rtype: numpy.ndarray
+    """
+    return 1.0/(1.0 +np.exp(-z))
+
+# TODO: IMPLEMENT FUNCTION
+def __hyperbolic__tangent__(z):
+    return z
+
+# TODO: IMPLEMENT FUNCTION
+def __cosine__(z):
+    return z
+
+# TODO: IMPLEMENT FUNCTION
+def __gaussian__(z):
+    return z
+
+def __relu__(z):
+    """Applies relu activation function
+
+    :param z: The matrix of weighted sum values for each neuron
+    :type z: numpy.ndarray
+    :return: The matrix with relu applied to each element
+    :rtype: numpy.ndarray
+    """
+    return z if z > 0 else 0
+    
+def __pick_activation__(activation):
+    activation_picker = {
+        ActivationFunction.NULL: __null__,
+        ActivationFunction.SIGMOID: __sigmoid__,
+        ActivationFunction.HYPERBOLIC_TANGENT: __hyperbolic__tangent__,
+        ActivationFunction.COSINE: __cosine__,
+        ActivationFunction.GAUSSIAN: __gaussian__,
+        ActivationFunction.RELU: __relu__
+    }
+    return activation_picker.get(activation)
+
+def __enumerate_activation__(activation_string):
+    """Enumerate the activation function
+
+    :param activation_string: string representing the activation function
+    :type activation_string: string
+    :return: The enumerated activation function
+    :rtype: Enum.ActivationFunction
+    """
+    activation_string = activation_string.lower()
+    activation_enum = {
+        "null": ActivationFunction.NULL,
+        "sigmoid": ActivationFunction.SIGMOID,
+        "hyperbolictangent": ActivationFunction.HYPERBOLIC_TANGENT,
+        "cosine": ActivationFunction.COSINE,
+        "gaussian": ActivationFunction.GAUSSIAN,
+        "relu": ActivationFunction.RELU
+    }
+    return activation_enum.get(activation_string, ActivationFunction.NULL)
 
 class ANN:
     """Artificial Neural Network class Implementation
@@ -86,11 +168,17 @@ class ANN:
         """
         if not self.compiled:
             raise Exception("The neural network must be compiled before performing training or inference.")
-        if not input_matrix.shape[1] == self.weights[0]:
+        if not input_matrix.shape[1] == self.weights[0].shape[0]:
             raise Exception("The input columns have been misconfigured. Expected: ", self.input_cols, "Actual: ", input_matrix.shape[1])
-        self.layer_outputs = [__calculate_one_layer__(input_matrix, self.weights[0], self.bias[0])]
+        # Input layer special case
+        weighted_sum = __calculate_one_layer__(input_matrix, self.weights[0], self.bias[0])
+        with_activation = __apply_activation__(weighted_sum, self.layers[0].activation)
+        self.layer_outputs = [with_activation]
+        # Hidden layers -> output layer
         for i in range(1, len(self.weights)):
-            self.layer_outputs = self.layer_outputs + [__calculate_one_layer__(self.layer_outputs[i-1], self.weights[i], self.bias[i])]
+            weighted_sum = __calculate_one_layer__(self.layer_outputs[i-1], self.weights[i], self.bias[i])
+            with_activation = __apply_activation__(weighted_sum, self.layers[i].activation)
+            self.layer_outputs = self.layer_outputs + [with_activation]
 
     def __generate_weights__(self):
         """Generates the weight matrices & bias vectors for the ANN Layers
@@ -116,9 +204,9 @@ class ANN:
 class Layer:
     """Layer class used to add layers to the ANN
     """
-    def __init__(self, neurons, activation=None, use_bias=True):
+    def __init__(self, neurons, activation="null", use_bias=True):
         self.neurons = neurons
-        self.activation = activation
+        self.activation = __enumerate_activation__(activation)
         self.use_bias = use_bias
         
 

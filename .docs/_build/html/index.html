@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Biologically Inspired Computation Coursework’s documentation! &#8212; Biologically Inspired Computation Coursework 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Coursework.model">
+<span id="welcome-to-biologically-inspired-computation-coursework-s-documentation"></span><h1>Welcome to Biologically Inspired Computation Coursework’s documentation!<a class="headerlink" href="#module-Coursework.model" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="Coursework.model.ANN">
+<em class="property">class </em><code class="sig-prename descclassname">Coursework.model.</code><code class="sig-name descname">ANN</code><a class="headerlink" href="#Coursework.model.ANN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Artificial Neural Network class Implementation</p>
+<dl class="py method">
+<dt id="Coursework.model.ANN.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new layer to the Neural Network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>layer</strong> (<a class="reference internal" href="#Coursework.model.Layer" title="Coursework.model.Layer"><em>Layer</em></a>) – Add an instance of the layer class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Coursework.model.ANN.compile">
+<code class="sig-name descname">compile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile the Neural Network so it is ready for training or inference</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Coursework.model.ANN.epoch">
+<code class="sig-name descname">epoch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p>One epoch of the Neural Network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_matrix</strong> (<em>numpy.ndarray</em>) – The matrix provided to the neural network</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Exception</strong> – Not Compiled exception</p></li>
+<li><p><strong>Exception</strong> – Misconfigured input columns exception</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Coursework.model.ANN.set_input_cols">
+<code class="sig-name descname">set_input_cols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">col_int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.set_input_cols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the number of columns in the input matrix for the ANN</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>col_int</strong> (<em>int</em>) – Integer of the number of rows</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="Coursework.model.ActivationFunction">
+<em class="property">class </em><code class="sig-prename descclassname">Coursework.model.</code><code class="sig-name descname">ActivationFunction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ActivationFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="Coursework.model.Layer">
+<em class="property">class </em><code class="sig-prename descclassname">Coursework.model.</code><code class="sig-name descname">Layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">neurons</span></em>, <em class="sig-param"><span class="n">activation</span><span class="o">=</span><span class="default_value">'null'</span></em>, <em class="sig-param"><span class="n">use_bias</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.Layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Layer class used to add layers to the ANN</p>
+</dd></dl>
+
+<span class="target" id="module-Coursework.data"></span><dl class="py class">
+<dt id="Coursework.data.Data">
+<em class="property">class </em><code class="sig-prename descclassname">Coursework.data.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infile</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">delim</span><span class="o">=</span><span class="default_value">'\t'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.data.Data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data class to handle normalization and structure of input data</p>
+<dl class="py method">
+<dt id="Coursework.data.Data.get_output">
+<code class="sig-name descname">get_output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.data.Data.get_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Desired result vector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>numpy ndarray with the actual results</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Coursework.data.Data.get_rows">
+<code class="sig-name descname">get_rows</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.data.Data.get_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the rows of the datafile, excluding the outcome column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>returns numpy ndarray of input data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Biologically Inspired Computation Coursework</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Sam Fay-Hunt, Kamil Szymczak.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

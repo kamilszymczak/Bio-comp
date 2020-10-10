@@ -11,31 +11,8 @@ def __weight_matrix__(x, y):
         """
         return 2*np.random.rand(x, y)-1
 
-def __calculate_one_layer__(input_matrix, weight_matrix, bias):
-    """Calculate the output of a single layer
 
-    :param input_matrix: The input matrix to the layer
-    :type input_matrix: numpy.ndarray
-    :param weight_matrix: The matrix of weights for the layer
-    :type weight_matrix: numpy.ndarray
-    :param bias: The bias vector for the layer
-    :type bias: numpy.ndarray
-    :raises Exception: Dot product rule violation
-    :raises Exception: Bias doesnt match number of neurons in layer
-    :return: Returns the output of each neuron in the layer
-    :rtype: numpy.ndarray
-    """
-    #if not (input_matrix.shape[1] == weight_matrix.shape[0]):
-    #    raise Exception("The number of columns in the input_matrix must equal the number of rows in the weight_matrix.")
-    
-    #if not (bias.shape[0] == weight_matrix.shape[1]):
-    #    raise Exception("The number of elements in the bias vector should be the same as the number of columns in the weigth matrix.")
-    out_vec = np.dot(input_matrix, weight_matrix)
-    out_vec = out_vec + bias
-    return out_vec
-
-
-def single_layer_forward_propagation(N_prev, W_curr, bias, activation):
+def __single_layer_forward_propagation__(N_prev, W_curr, bias, activation):
     Z_curr = np.dot(N_prev, W_curr)
     Z_curr = Z_curr + bias
 
@@ -54,8 +31,6 @@ class ANN:
         """
         # List of layers
         self.layers=[]
-        # List of bias
-        self.bias = []
         self.col_int=None
         self.input=None
         self.compiled=False
@@ -66,6 +41,8 @@ class ANN:
         :param layer: Add an instance of the layer class
         :type layer: Layer
         """
+        if self.input == None:
+            raise Exception("Define input first before creating layers.")
         if not inspect.isclass(Layer):
             raise Exception("Parameter must be an instance of the Layer class.")
         self.layers.append(layer)
@@ -77,7 +54,8 @@ class ANN:
         :param input_matrix: matrix of input data
         :type col_int: int
         """
-        self.input_cols = input_matrix.shape[1]
+        # self.input_cols = input_matrix.shape[1]
+        self.layers.append(Layer(input_matrix.shape[1], use_bias=True))
         self.input = input_matrix
 
     def compile(self):
@@ -91,7 +69,7 @@ class ANN:
         self.compiled = True
         print("Model Compiled!")
 
-    def epoch(self, input_matrix):
+    def epoch(self):
         """One epoch of the Neural Network
 
         :param input_matrix: The matrix provided to the neural network
@@ -103,17 +81,28 @@ class ANN:
             raise Exception("The neural network must be compiled before performing training or inference.")
         if not input_matrix.shape[1] == self.weights[0]:
             raise Exception("The input columns have been misconfigured. Expected: ", self.input_cols, "Actual: ", input_matrix.shape[1])
-        # First layer / input and first set of weights
-        self.layer_outputs = [single_layer_forward_propagation(input_matrix, self.weights[0], self.bias[0], self.layers[0].get_activation())]
-        # self.layer_outputs = [__calculate_one_layer__(input_matrix, self.weights[0], self.bias[0])]
-        for i in range(1, len(self.weights)):
-            self.layer_outputs = self.layer_outputs + [single_layer_forward_propagation(self.layer_outputs[i-1], self.weights[i], self.bias[i]), self.layers[i].get_activation()]
+
+        # First layer / input and first set of weights (OLD)
+        # self.layer_outputs = [__single_layer_forward_propagation__(self.input, self.weights[0], self.bias[0], self.layers[0].activation)]
+        # for i in range(1, len(self.weights)):
+        #     self.layer_outputs = self.layer_outputs + [__single_layer_forward_propagation__(self.layer_outputs[i-1], self.weights[i], self.bias[i], self.layers[i].activation)]
+
+        # NEW
+        for i in range(1, len(self.layers)):
+            if i == len(self.layers)-1:
+                output = __single_layer_forward_propagation__(self.layer[i-1].neurons_val, self.layer[i-1].weights, self.layer[i-1].bias, self.layers[i-1].activation)
+                output_layer = Layer(output.shape[1])
+                output_layer.neurons_val = output
+                break
+
+            self.layer[i].neurons_val = __single_layer_forward_propagation__(self.layer[i-1].neurons_val, self.layer[i-1].weights, self.layer[i-1].bias, self.layers[i-1].activation)
+
+        return output_layer
 
     def __generate_weights__(self):
         """Generates the weight matrices & bias vectors for the ANN Layers
         """
-        num_cols = self.input_cols
-        neuron_definition = [num_cols]
+        neuron_definition = [self.input_cols]
         temp_bias = []
         
         # Build the bias list & collect the number of neurons into a single list
@@ -130,16 +119,23 @@ class ANN:
         self.weights = temp_weights
         self.bias = temp_bias
 
+        for i in range(len(self.layers)):
+            self.layers[i].weigths = __weight_matrix__(neuron_definition[i-1], neuron_definition[i])
+            if self.layers[i].use_bias:
+                self.layers[i].bias = 2*np.random.rand(self.layers[i].neurons)-1
+
 class Layer:
     """Layer class used to add layers to the ANN
     """
     def __init__(self, neurons, activation=None, use_bias=True):
+        """Construct a new Layer
+        """
         self.neurons = neurons
+        self.neurons_val = []
+        self.weights = []
+        self.bias = []
         self.activation = activation
         self.use_bias = use_bias
-
-    def get_activation(self):
-        return self.activation
 
         
 

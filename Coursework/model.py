@@ -14,28 +14,27 @@ def __weight_matrix__(x, y):
         """
         return 2*np.random.rand(x, y)-1
 
-def __calculate_one_layer__(input_matrix, weight_matrix, bias):
+def __calculate_one_layer__(input_matrix, layer):
     """Calculate the output of a single layer
 
     :param input_matrix: The input matrix to the layer
     :type input_matrix: numpy.ndarray
-    :param weight_matrix: The matrix of weights for the layer
-    :type weight_matrix: numpy.ndarray
-    :param bias: The bias vector for the layer
-    :type bias: numpy.ndarray
+    :param layer: The layer being calculated
+    :type layer: Layer
     :raises Exception: Dot product rule violation
     :raises Exception: Bias doesnt match number of neurons in layer
     :return: Returns the output of each neuron in the layer
     :rtype: numpy.ndarray
     """
-    if not (input_matrix.shape[1] == weight_matrix.shape[0]):
+    if not (input_matrix.shape[1] == layer.weights.shape[0]):
         raise Exception("The number of columns in the input_matrix must equal the number of rows in the weight_matrix.")
     
-    if not (bias.shape[0] == weight_matrix.shape[1]):
+    if not (layer.bias.shape[0] == layer.weights.shape[1]):
         raise Exception("The number of elements in the bias vector should be the same as the number of columns in the weigth matrix.")
-    out = np.dot(input_matrix, weight_matrix)
-    out = out + bias
-    return out
+    out = np.dot(input_matrix, layer.weights)
+    if layer.use_bias:
+        out = out + layer.bias
+    return __apply_activation__(out, layer.activation)
 
 def __apply_activation__(weighted_sum, activation_func):
     """Apply activation function to matrix
@@ -130,11 +129,9 @@ class ANN:
     def __init__(self):
         """Construct a new sequential Artificial Neural Network
         """
-        # List of layers
         self.layers=[]
-        # List of bias
-        self.bias = []
-        self.input_cols=None
+        self.input=None
+        self.input_column_size=None
         self.compiled=False
 
     def add(self, layer):
@@ -146,75 +143,87 @@ class ANN:
         if not inspect.isclass(Layer):
             raise Exception("Parameter must be an instance of the Layer class.")
         self.layers = self.layers + [layer]
+        self.compiled = False
 
-    def set_input_cols(self, col_int):
-        """Set the number of columns in the input matrix for the ANN
+    def set_input(self, input_matrix, result_vector):
+        """Provide the input data to the ANN
 
-        :param col_int: Integer of the number of rows
-        :type col_int: int
+        :param input_matrix: The input matrix
+        :type input_matrix: np.ndarray
+        :param result_vector: A vector or results. Specifies the 'Y' values to calculate the loss when training
+        :type result_vector: numpy.ndarray
+        :raises Exception: If input matrix columns doesnt match already configured columns
         """
-        self.input_cols = col_int
+        if input_matrix.shape[0] != result_vector.shape[0]:
+            raise Exception("Number of rows in the input matrix and result vector are not compatible")
+        if self.input_column_size is None:
+            self.input_column_size = input_matrix.shape[1]
+            self.input = input_matrix
+            self.compiled = False
 
+        elif self.input_column_size == input_matrix.shape[1]:
+            self.input = input_matrix
+        else:
+            raise Exception("Weights might have been generated for a different shape input, please check the columns of your input")
+    
     def compile(self):
         """Compile the Neural Network so it is ready for training or inference
         """
-        if self.input_cols == None:
+        if self.input is None:
             raise Exception("Must define the size of the input matrix.")
-        if len(self.layers) < 2:
-            raise Exception("The ANN needs at least 1 hidden and 1 output layer.")
+        if len(self.layers) < 1:
+            raise Exception("The ANN needs at least 1 layer.")
         self.__generate_weights__()
         self.compiled = True
         print("Model Compiled!")
 
-    def epoch(self, input_matrix):
-        """One epoch of the Neural Network
+    def one_pass(self):
+        """One pass of data in input through the Neural Network
 
-        :param input_matrix: The matrix provided to the neural network
-        :type input_matrix: numpy.ndarray
         :raises Exception: Not Compiled exception
-        :raises Exception: Misconfigured input columns exception
         """
         if not self.compiled:
             raise Exception("The neural network must be compiled before performing training or inference.")
-        if not input_matrix.shape[1] == self.weights[0].shape[0]:
-            raise Exception("The input columns have been misconfigured. Expected: ", self.input_cols, "Actual: ", input_matrix.shape[1])
         # Input layer special case
-        weighted_sum = __calculate_one_layer__(input_matrix, self.weights[0], self.bias[0])
-        with_activation = __apply_activation__(weighted_sum, self.layers[0].activation)
-        self.layer_outputs = [with_activation]
+        self.layers[0].output = __calculate_one_layer__(self.input, self.layers[0])
         # Hidden layers -> output layer
-        for i in range(1, len(self.weights)):
-            weighted_sum = __calculate_one_layer__(self.layer_outputs[i-1], self.weights[i], self.bias[i])
-            with_activation = __apply_activation__(weighted_sum, self.layers[i].activation)
-            self.layer_outputs = self.layer_outputs + [with_activation]
+        for i in range(1, len(self.layers)):
+            self.layers[i].output = __calculate_one_layer__(self.layers[i-1].output, self.layers[i])
 
     def __generate_weights__(self):
         """Generates the weight matrices & bias vectors for the ANN Layers
         """
-        num_cols = self.input_cols
-        neuron_definition = [num_cols]
-        temp_bias = []
+
+        # raise exception if no input
         
-        # Build the bias list & collect the number of neurons into a single list
-        for i in range(len(self.layers)):
-            temp_bias = temp_bias + [2*np.random.rand(self.layers[i].neurons)-1]
-            neuron_definition = neuron_definition + [self.layers[i].neurons]
+        # special case for weights & bias from input layer
+        self.layers[0].bias = 2*np.random.rand(self.layers[0].neurons)-1
+        self.layers[0].weights = __weight_matrix__(self.input.shape[1], self.layers[0].neurons)
         
-        # construct the weight matrices
-        # neuron_definition[0] is the number of columns of the input layer
-        temp_weights = []
-        for i  in range(1, len(neuron_definition)):
-            temp_weights = temp_weights + [__weight_matrix__(neuron_definition[i-1], neuron_definition[i])]
+        # Construct weight matrices & bias of each layer
+        for i in range(1, len(self.layers)):
+            self.layers[i].bias = 2*np.random.rand(self.layers[i].neurons)-1
+            self.layers[i].weights = __weight_matrix__(self.layers[i-1].neurons, self.layers[i].neurons)
         
-        self.weights = temp_weights
-        self.bias = temp_bias
 
 class Layer:
     """Layer class used to add layers to the ANN
     """
     def __init__(self, neurons, activation="null", use_bias=True):
+        """Constuctor for Layer class
+
+        :param neurons: The number of neurons in the layer
+        :type neurons: int
+        :param activation: The activation funciton for the layer, defaults to "null"
+        :type activation: str, optional
+        :param use_bias: If you use a bias, defaults to True
+        :type use_bias: bool, optional
+        """
         self.neurons = neurons
         self.activation = __enumerate_activation__(activation)
         self.use_bias = use_bias
+        self.weights = None
+        self.bias = None
+        self.output = None
         
 

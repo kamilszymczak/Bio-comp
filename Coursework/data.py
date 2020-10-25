@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 class Data:
     """Data class to handle normalization and structure of input data
@@ -15,7 +16,7 @@ class Data:
         :param delim: Delimiter for reading data
         :type delim: String
         """
-        self.df = pd.read_csv(infile, delimiter=delim, na_values='.', header='infer') #read the data
+        self.df = pd.DataFrame(np.loadtxt(infile, dtype=float))
 
         if normalize:
             self.normalize()
@@ -31,7 +32,7 @@ class Data:
         :return: returns numpy ndarray of input data
         :rtype: ndarray
         """
-        return self.df.iloc[:,:-1].to_numpy()
+        return self.df.drop(self.df.columns[-1],axis=1).to_numpy()
 
     # returns outcome column as a numpy matrix
     def get_output(self):

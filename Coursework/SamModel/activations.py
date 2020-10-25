@@ -15,23 +15,39 @@ def sigmoid(z):
     """
     return 1.0/(1.0 + np.exp(-z))
 
-# TODO: IMPLEMENT FUNCTION
 
 
 def hyperbolic_tangent(z):
-    return z
+    """Applies hyperbolic tangent activation function
 
-# TODO: IMPLEMENT FUNCTION
+    :param z: The matrix of weighted sum values for each neuron
+    :type z: numpy.ndarray
+    :return: The matrix with hyperbolic tangent applied to each element
+    :rtype: numpy.ndarray
+    """
+    return np.tanh(z)
 
 
 def cosine(z):
-    return z
+    """Applies cosine activation function
 
-# TODO: IMPLEMENT FUNCTION
+    :param z: The matrix of weighted sum values for each neuron
+    :type z: numpy.ndarray
+    :return: The matrix with cosine applied to each element
+    :rtype: numpy.ndarray
+    """    
+    return np.cos(z)
 
 
 def gaussian(z):
-    return z
+    """Applies gaussian activation function
+
+    :param z: The matrix of weighted sum values for each neuron
+    :type z: numpy.ndarray
+    :return: The matrix with gaussian applied to each element
+    :rtype: numpy.ndarray
+    """
+    return (e)**((-z)**2)
 
 
 def relu(z):

@@ -1,15 +1,7 @@
 import numpy as np
 import inspect
+import activations
 
-def sigmoid(z):
-    """Applies sigmoid activation function
-
-    :param z: The matrix of weighted sum values for each neuron
-    :type z: numpy.ndarray
-    :return: The matrix with sigmoid applied to each element
-    :rtype: numpy.ndarray
-    """
-    return 1.0/(1.0 +np.exp(-z))
 
 def __weight_matrix__(x, y):
         """Return a numpy array of random weights with the specified size

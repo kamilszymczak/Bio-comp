@@ -1,10 +1,36 @@
 import numpy as np
 import inspect
 import enum
+from . import activations as activ
+from . import loss
 
-ActivationFunction = enum.Enum('ActivationFunction', 'NULL SIGMOID HYPERBOLIC_TANGENT COSINE GAUSSIAN RELU')
+ActivationFunction = enum.Enum('ActivationFunction', 'NULL SIGMOID HYPERBOLIC_TANGENT COSINE GAUSSIAN RELU SOFTMAX')
 
-def __weight_matrix__(x, y):
+activation_picker = {
+    ActivationFunction.NULL: activ.null,
+    ActivationFunction.SIGMOID: activ.sigmoid,
+    ActivationFunction.HYPERBOLIC_TANGENT: activ.hyperbolic_tangent,
+    ActivationFunction.COSINE: activ.cosine,
+    ActivationFunction.GAUSSIAN: activ.gaussian,
+    ActivationFunction.RELU: activ.relu
+}
+
+activation_enum = {
+    "null": ActivationFunction.NULL,
+    "sigmoid": ActivationFunction.SIGMOID,
+    "hyperbolictangent": ActivationFunction.HYPERBOLIC_TANGENT,
+    "tan": ActivationFunction.HYPERBOLIC_TANGENT,
+    "cosine": ActivationFunction.COSINE,
+    "gaussian": ActivationFunction.GAUSSIAN,
+    "relu": ActivationFunction.RELU
+}
+
+loss_picker = {
+    'mse': loss.mean_squared_error,
+    'meansquarederror': loss.mean_squared_error
+}
+
+def weight_matrix(x, y):
         """Return a numpy array of random weights with the specified size
 
         :param x: number of rows in the desired matrix
@@ -14,7 +40,7 @@ def __weight_matrix__(x, y):
         """
         return 2*np.random.rand(x, y)-1
 
-def __calculate_one_layer__(input_matrix, layer):
+def calculate_one_layer(input_matrix, layer):
     """Calculate the output of a single layer
 
     :param input_matrix: The input matrix to the layer
@@ -34,9 +60,9 @@ def __calculate_one_layer__(input_matrix, layer):
     out = np.dot(input_matrix, layer.weights)
     if layer.use_bias:
         out = out + layer.bias
-    return __apply_activation__(out, layer.activation)
+    return apply_activation(out, layer.activation)
 
-def __apply_activation__(weighted_sum, activation_func):
+def apply_activation(weighted_sum, activation_func):
     """Apply activation function to matrix
 
     :param weighted_sum: The matrix of the sum of input * weight + bias
@@ -44,48 +70,27 @@ def __apply_activation__(weighted_sum, activation_func):
     :param activation_func: The activation function identifier
     :type activation_func: Enum.ActivationFunction
     """
-    af = __pick_activation__(activation_func)
+    af = pick_activation(activation_func)
     if af == None:
         raise Exception("Invalid activation function")
     return af(weighted_sum)
 
-# TODO: IMPLEMENT FUNCTION
-def __null__(z):
-    return z
+def apply_loss(y, y_hat, loss_func='MSE'):
+    """Apply the loss function
 
-def __sigmoid__(z):
-    """Applies sigmoid activation function
-
-    :param z: The matrix of weighted sum values for each neuron
-    :type z: numpy.ndarray
-    :return: The matrix with sigmoid applied to each element
-    :rtype: numpy.ndarray
+    :param y: the actual labels
+    :type y: numpy.array
+    :param y_hat: the predicted labels
+    :type y_hat: numpy.array
+    :param loss_func: name of the loss function, defaults to 'MSE'
+    :type loss_func: str, optional
+    :return: The value calculated by the loss function
+    :rtype: float
     """
-    return 1.0/(1.0 +np.exp(-z))
-
-# TODO: IMPLEMENT FUNCTION
-def __hyperbolic__tangent__(z):
-    return z
-
-# TODO: IMPLEMENT FUNCTION
-def __cosine__(z):
-    return z
-
-# TODO: IMPLEMENT FUNCTION
-def __gaussian__(z):
-    return z
-
-def __relu__(z):
-    """Applies relu activation function
-
-    :param z: The matrix of weighted sum values for each neuron
-    :type z: numpy.ndarray
-    :return: The matrix with relu applied to each element
-    :rtype: numpy.ndarray
-    """
-    return z if z > 0 else 0
+    loss_fn = loss_picker.get(loss_func.lower())
+    return loss_fn(y, y_hat)
     
-def __pick_activation__(activation):
+def pick_activation(activation):
     """Select activation function to use
 
     :param activation: The activation function identifier
@@ -93,17 +98,9 @@ def __pick_activation__(activation):
     :return: reference to the activation function defintion
     :rtype: fn
     """
-    activation_picker = {
-        ActivationFunction.NULL: __null__,
-        ActivationFunction.SIGMOID: __sigmoid__,
-        ActivationFunction.HYPERBOLIC_TANGENT: __hyperbolic__tangent__,
-        ActivationFunction.COSINE: __cosine__,
-        ActivationFunction.GAUSSIAN: __gaussian__,
-        ActivationFunction.RELU: __relu__
-    }
     return activation_picker.get(activation)
 
-def __enumerate_activation__(activation_string):
+def enumerate_activation(activation_string):
     """Enumerate the activation function
 
     :param activation_string: string representing the activation function
@@ -112,16 +109,8 @@ def __enumerate_activation__(activation_string):
     :rtype: Enum.ActivationFunction
     """
     activation_string = activation_string.lower()
-    activation_enum = {
-        "null": ActivationFunction.NULL,
-        "sigmoid": ActivationFunction.SIGMOID,
-        "hyperbolictangent": ActivationFunction.HYPERBOLIC_TANGENT,
-        "tan": ActivationFunction.HYPERBOLIC_TANGENT,
-        "cosine": ActivationFunction.COSINE,
-        "gaussian": ActivationFunction.GAUSSIAN,
-        "relu": ActivationFunction.RELU
-    }
     return activation_enum.get(activation_string, ActivationFunction.NULL)
+
 
 class ANN:
     """Artificial Neural Network class Implementation
@@ -131,8 +120,12 @@ class ANN:
         """
         self.layers=[]
         self.input=None
+        self.y=None
         self.input_column_size=None
         self.compiled=False
+        self.y_hat = None
+        self.loss_fn = 'MSE'
+        self.loss = None
 
     def add(self, layer):
         """Add a new layer to the Neural Network
@@ -165,7 +158,8 @@ class ANN:
             self.input = input_matrix
         else:
             raise Exception("Weights might have been generated for a different shape input, please check the columns of your input")
-    
+        self.y = result_vector    
+        
     def compile(self):
         """Compile the Neural Network so it is ready for training or inference
         """
@@ -185,10 +179,24 @@ class ANN:
         if not self.compiled:
             raise Exception("The neural network must be compiled before performing training or inference.")
         # Input layer special case
-        self.layers[0].output = __calculate_one_layer__(self.input, self.layers[0])
+        self.layers[0].output = calculate_one_layer(self.input, self.layers[0])
         # Hidden layers -> output layer
         for i in range(1, len(self.layers)):
-            self.layers[i].output = __calculate_one_layer__(self.layers[i-1].output, self.layers[i])
+            self.layers[i].output = calculate_one_layer(self.layers[i-1].output, self.layers[i])
+        self.y_hat = self.layers[-1].output
+        self.loss = apply_loss(self.y, self.y_hat, loss_func=self.loss_fn)
+
+    def set_loss_function(self, loss):
+        """Set the loss to the specified function
+
+        :param loss: The loss function to use
+        :type loss: str
+        """
+        if loss_picker.has_key(loss):
+            self.loss_fn = loss
+        else: 
+            raise ValueError('There is no loss function defined for this key')
+        
 
     def __generate_weights__(self):
         """Generates the weight matrices & bias vectors for the ANN Layers
@@ -198,12 +206,12 @@ class ANN:
         
         # special case for weights & bias from input layer
         self.layers[0].bias = 2*np.random.rand(self.layers[0].neurons)-1
-        self.layers[0].weights = __weight_matrix__(self.input.shape[1], self.layers[0].neurons)
+        self.layers[0].weights = weight_matrix(self.input.shape[1], self.layers[0].neurons)
         
         # Construct weight matrices & bias of each layer
         for i in range(1, len(self.layers)):
             self.layers[i].bias = 2*np.random.rand(self.layers[i].neurons)-1
-            self.layers[i].weights = __weight_matrix__(self.layers[i-1].neurons, self.layers[i].neurons)
+            self.layers[i].weights = weight_matrix(self.layers[i-1].neurons, self.layers[i].neurons)
         
 
 class Layer:
@@ -220,7 +228,7 @@ class Layer:
         :type use_bias: bool, optional
         """
         self.neurons = neurons
-        self.activation = __enumerate_activation__(activation)
+        self.activation = enumerate_activation(activation)
         self.use_bias = use_bias
         self.weights = None
         self.bias = None

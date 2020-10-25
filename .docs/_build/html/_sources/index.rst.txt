@@ -6,10 +6,16 @@
 Welcome to Biologically Inspired Computation Coursework's documentation!
 ========================================================================
 
-.. automodule:: Coursework.model
+.. automodule:: loss
     :members:
 
-.. automodule:: Coursework.data
+.. automodule:: activations
+    :members:
+
+.. automodule:: model
+    :members:
+
+.. automodule:: data
     :members:
 
 .. toctree::

@@ -37,78 +37,221 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-Coursework.model">
-<span id="welcome-to-biologically-inspired-computation-coursework-s-documentation"></span><h1>Welcome to Biologically Inspired Computation Coursework’s documentation!<a class="headerlink" href="#module-Coursework.model" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
-<dt id="Coursework.model.ANN">
-<em class="property">class </em><code class="sig-prename descclassname">Coursework.model.</code><code class="sig-name descname">ANN</code><a class="headerlink" href="#Coursework.model.ANN" title="Permalink to this definition">¶</a></dt>
+  <div class="section" id="module-loss">
+<span id="welcome-to-biologically-inspired-computation-coursework-s-documentation"></span><h1>Welcome to Biologically Inspired Computation Coursework’s documentation!<a class="headerlink" href="#module-loss" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-activations"></span><dl class="py function">
+<dt id="activations.relu">
+<code class="sig-prename descclassname">activations.</code><code class="sig-name descname">relu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#activations.relu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies relu activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>numpy.ndarray</em>) – The matrix of weighted sum values for each neuron</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The matrix with relu applied to each element</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="activations.sigmoid">
+<code class="sig-prename descclassname">activations.</code><code class="sig-name descname">sigmoid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#activations.sigmoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies sigmoid activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>numpy.ndarray</em>) – The matrix of weighted sum values for each neuron</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The matrix with sigmoid applied to each element</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-model"></span><dl class="py class">
+<dt id="model.ANN">
+<em class="property">class </em><code class="sig-prename descclassname">model.</code><code class="sig-name descname">ANN</code><a class="headerlink" href="#model.ANN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Artificial Neural Network class Implementation</p>
 <dl class="py method">
-<dt id="Coursework.model.ANN.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.add" title="Permalink to this definition">¶</a></dt>
+<dt id="model.ANN.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new layer to the Neural Network</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>layer</strong> (<a class="reference internal" href="#Coursework.model.Layer" title="Coursework.model.Layer"><em>Layer</em></a>) – Add an instance of the layer class</p>
+<dd class="field-odd"><p><strong>layer</strong> (<a class="reference internal" href="#model.Layer" title="model.Layer"><em>Layer</em></a>) – Add an instance of the layer class</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Coursework.model.ANN.compile">
-<code class="sig-name descname">compile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.compile" title="Permalink to this definition">¶</a></dt>
+<dt id="model.ANN.compile">
+<code class="sig-name descname">compile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.compile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compile the Neural Network so it is ready for training or inference</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Coursework.model.ANN.epoch">
-<code class="sig-name descname">epoch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p>One epoch of the Neural Network</p>
+<dt id="model.ANN.one_pass">
+<code class="sig-name descname">one_pass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.one_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>One pass of data in input through the Neural Network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>Exception</strong> – Not Compiled exception</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="model.ANN.set_input">
+<code class="sig-name descname">set_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em>, <em class="sig-param"><span class="n">result_vector</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.set_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide the input data to the ANN</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>input_matrix</strong> (<em>numpy.ndarray</em>) – The matrix provided to the neural network</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_matrix</strong> (<em>np.ndarray</em>) – The input matrix</p></li>
+<li><p><strong>result_vector</strong> (<em>numpy.ndarray</em>) – A vector or results. Specifies the ‘Y’ values to calculate the loss when training</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>Exception</strong> – Not Compiled exception</p></li>
-<li><p><strong>Exception</strong> – Misconfigured input columns exception</p></li>
+<dd class="field-even"><p><strong>Exception</strong> – If input matrix columns doesnt match already configured columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="model.ActivationFunction">
+<em class="property">class </em><code class="sig-prename descclassname">model.</code><code class="sig-name descname">ActivationFunction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.ActivationFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="model.Layer">
+<em class="property">class </em><code class="sig-prename descclassname">model.</code><code class="sig-name descname">Layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">neurons</span></em>, <em class="sig-param"><span class="n">activation</span><span class="o">=</span><span class="default_value">'null'</span></em>, <em class="sig-param"><span class="n">use_bias</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Layer class used to add layers to the ANN</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="model.apply_activation">
+<code class="sig-prename descclassname">model.</code><code class="sig-name descname">apply_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weighted_sum</span></em>, <em class="sig-param"><span class="n">activation_func</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.apply_activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply activation function to matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>weighted_sum</strong> (<em>numpy.ndarray</em>) – The matrix of the sum of input * weight + bias</p></li>
+<li><p><strong>activation_func</strong> (<em>Enum.ActivationFunction</em>) – The activation function identifier</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="Coursework.model.ANN.set_input_cols">
-<code class="sig-name descname">set_input_cols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">col_int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ANN.set_input_cols" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the number of columns in the input matrix for the ANN</p>
+<dl class="py function">
+<dt id="model.apply_loss">
+<code class="sig-prename descclassname">model.</code><code class="sig-name descname">apply_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">y_hat</span></em>, <em class="sig-param"><span class="n">loss_func</span><span class="o">=</span><span class="default_value">'MSE'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.apply_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the loss function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>col_int</strong> (<em>int</em>) – Integer of the number of rows</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>numpy.array</em>) – the actual labels</p></li>
+<li><p><strong>y_hat</strong> (<em>numpy.array</em>) – the predicted labels</p></li>
+<li><p><strong>loss_func</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the loss function, defaults to ‘MSE’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The value calculated by the loss function</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="model.calculate_one_layer">
+<code class="sig-prename descclassname">model.</code><code class="sig-name descname">calculate_one_layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em>, <em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.calculate_one_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the output of a single layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_matrix</strong> (<em>numpy.ndarray</em>) – The input matrix to the layer</p></li>
+<li><p><strong>layer</strong> (<a class="reference internal" href="#model.Layer" title="model.Layer"><em>Layer</em></a>) – The layer being calculated</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Exception</strong> – Dot product rule violation</p></li>
+<li><p><strong>Exception</strong> – Bias doesnt match number of neurons in layer</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns the output of each neuron in the layer</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py class">
-<dt id="Coursework.model.ActivationFunction">
-<em class="property">class </em><code class="sig-prename descclassname">Coursework.model.</code><code class="sig-name descname">ActivationFunction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.ActivationFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>An enumeration.</p>
+<dl class="py function">
+<dt id="model.enumerate_activation">
+<code class="sig-prename descclassname">model.</code><code class="sig-name descname">enumerate_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">activation_string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.enumerate_activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enumerate the activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>activation_string</strong> (<em>string</em>) – string representing the activation function</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The enumerated activation function</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Enum.ActivationFunction</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py class">
-<dt id="Coursework.model.Layer">
-<em class="property">class </em><code class="sig-prename descclassname">Coursework.model.</code><code class="sig-name descname">Layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">neurons</span></em>, <em class="sig-param"><span class="n">activation</span><span class="o">=</span><span class="default_value">'null'</span></em>, <em class="sig-param"><span class="n">use_bias</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.model.Layer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Layer class used to add layers to the ANN</p>
+<dl class="py function">
+<dt id="model.pick_activation">
+<code class="sig-prename descclassname">model.</code><code class="sig-name descname">pick_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">activation</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.pick_activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select activation function to use</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>activation</strong> (<em>Enum.ActivationFunction</em>) – The activation function identifier</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>reference to the activation function defintion</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fn</p>
+</dd>
+</dl>
 </dd></dl>
 
-<span class="target" id="module-Coursework.data"></span><dl class="py class">
-<dt id="Coursework.data.Data">
-<em class="property">class </em><code class="sig-prename descclassname">Coursework.data.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infile</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">delim</span><span class="o">=</span><span class="default_value">'\t'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.data.Data" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="model.weight_matrix">
+<code class="sig-prename descclassname">model.</code><code class="sig-name descname">weight_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.weight_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a numpy array of random weights with the specified size</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – number of rows in the desired matrix</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – number of columns in the desired matrix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-data"></span><dl class="py class">
+<dt id="data.Data">
+<em class="property">class </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infile</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">delim</span><span class="o">=</span><span class="default_value">'\t'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data class to handle normalization and structure of input data</p>
 <dl class="py method">
-<dt id="Coursework.data.Data.get_output">
-<code class="sig-name descname">get_output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.data.Data.get_output" title="Permalink to this definition">¶</a></dt>
+<dt id="data.Data.get_output">
+<code class="sig-name descname">get_output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data.Data.get_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Desired result vector</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -121,8 +264,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="Coursework.data.Data.get_rows">
-<code class="sig-name descname">get_rows</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Coursework.data.Data.get_rows" title="Permalink to this definition">¶</a></dt>
+<dt id="data.Data.get_rows">
+<code class="sig-name descname">get_rows</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data.Data.get_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all the rows of the datafile, excluding the outcome column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>

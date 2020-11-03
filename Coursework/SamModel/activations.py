@@ -47,7 +47,7 @@ def gaussian(z):
     :return: The matrix with gaussian applied to each element
     :rtype: numpy.ndarray
     """
-    return (e)**((-z)**2)
+    return np.exp((-z)**2)
 
 
 def relu(z):

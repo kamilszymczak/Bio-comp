@@ -1,4 +1,6 @@
-
+import numpy as np
+from datetime import datetime, timedelta
+import enum
 
 # Need a vector of all weights in a decodable order in the network
 # Need a vector of all activation functions in the network
@@ -15,8 +17,15 @@
 
 # sub boundary groups: define the inner boundaries for subsets of particles
 
-class pso:
-    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=0.2, gamma=0.2, delta=0.2, epsilon=0.1, max_iter=int(1e4)):
+
+TerminationPolicy = enum.Enum(
+    'TerminationPolicy', 'ITERATIONS DURATION CONVERGENCE')
+
+BoundaryPolicy = enum.Enum(
+    'BoundaryPolicy', 'RANDOMREINIT REFUSE BOUNCE')
+
+class PSO:
+    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=0.2, gamma=0.2, delta=0.2, epsilon=0.1, max_iter=int(1e6)):
         """PSO constructor
 
         :param swarm_size: desired swarm size, defaults to 10
@@ -41,34 +50,150 @@ class pso:
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
+        self.delta = delta
         self.epsilon = epsilon
         self.max_iter = max_iter
 
         # search_dimension is a list of tuples || an integer -- eg. search_dimension = 3 => [(-1, 1), (-1, 1), (-1, 1)]
         self.search_dimesion = None
+        self.search_dimesion_set = False
         self.best = None
         self.particles = None
 
 
-    def set_search_dimentions(self):
-        # should be first method call after instantiation
-        raise NotImplementedError()
 
-    def instantiate_particles(self):
-        #depends on set_search_dimensions
-        raise NotImplementedError()
+    def set_search_dimentions(self, dimensions):
+        """Specify the dimensionality of the search
+
+        :param dimensions: define dimensionality. Either with an int (using default boundaries), or a list/np.array of tuples descriping the boundaries for each dimension
+        :type dimensions: int / list / numpy.array
+        :raises ValueError: When dimension parameter does not meet specified requirements
+        """
+        if type(dimensions) is int:
+            self.search_dimesion = np.array([self.boundary for i in range(dimensions)])
+
+        elif type(dimensions) is list:
+            #TODO check list is valid
+            self.search_dimesion = np.array(dimensions)
+
+        elif isinstance(dimensions, np.ndarray):
+            #TODO check numpy array validity
+            self.search_dimesion = dimensions
+
+        else:
+            self.search_dimesion_set = False
+            raise ValueError("Invalid dimensions parameter")
+
+        self.search_dimesion_set = True
 
     def run(self):
+        self._instantiate_particles()
+        self.best = None
+        previous_best = self.best
+        controller = IterationController(TerminationPolicy.ITERATIONS, max_iter=1000)
+
+        while controller.terminate:
+            # Update best and personal fitness values based on the current positions
+            self._assess_fitness()
+            
+            # Update the informant fitness and velocity of all particles
+            self._update_particle()
+
+            # Move the particles based on their velocity
+            self._move_particles()
+
+            controller.next_iteration(self.best)
+
+
+
+
+    def _assess_fitness(self):
         raise NotImplementedError()
 
-    def calculate_fitness(self):
+    def _update_particle(self):
+        raise NotImplementedError()
+
+    def _move_particles(self):
+        raise NotImplementedError()
+
+    def _instantiate_particles(self):
+        #depends on set_search_dimensions
+        self.particles = [Particle(self._init_position(), self._init_velocity()) for i in range(self.swarm_size)]
+
+
+    def _init_position(self):
+        return 0
         raise NotImplementedError()
 
 
-
-class particle:
-    def __init__(self):
+    def _init_velocity(self):
+        return 0
         raise NotImplementedError()
-        self.search_space = [0.1, 0.5, -0.3]
+
+
+class Particle:
+    def __init__(self, position, velocity = None):
+        self.position = position
+        self.velocity = velocity
+
+        self.personal_fittest_loc = None
+        self.informat_fittest_loc = None
+        self.informants = None
+
+class FitnessLoc:
+    def __init__(self, location, fitness):
+        self.location = location
+        self.fitness = fitness   
+
+class IterationController:
+    def __init__(self, termination_policy, max_iter=None, min_fitness_delta=None, time_delta=None):
+
+        if type(termination_policy) is not list:
+            self.termination_policy = [termination_policy]
+        else:
+            self.termination_policy = termination_policy
+        
+        if TerminationPolicy.ITERATIONS in self.termination_policy:
+            if max_iter is None:
+                raise ValueError("Max iteration undefined")
+
+        if TerminationPolicy.DURATION in self.termination_policy:
+            if time_delta is None:
+                raise ValueError("Time delta undefined")
+
+        if TerminationPolicy.CONVERGENCE in self.termination_policy:
+            if min_fitness_delta is None:
+                raise ValueError("Fitness delta undefined")
+
+        
+        # Loop until terminate is true
+        self.terminate = False
+
+        # Number of iterations so far
+        self.current_iter = 0
+        self.max_iter = max_iter
+
+        # The fitness from the last iteration
+        self.min_fitness_delta = min_fitness_delta
+
+        self.start_time = datetime.now()
+        self.time_delta = time_delta
+
+    def next_iteration(self, fitness_delta):
+
+        if TerminationPolicy.ITERATIONS in self.termination_policy:
+            if self.max_iter < self.current_iter:
+                self.terminate = True
+
+        if TerminationPolicy.DURATION in self.termination_policy:
+            elapsed = datetime.now() - self.start_time
+            if elapsed > self.time_delta:
+                self.terminate = True
+
+        if TerminationPolicy.CONVERGENCE in self.termination_policy:
+            if self.min_fitness_delta >= fitness_delta:
+                self.terminate = True
+
+        self.current_iter += 1
 
 

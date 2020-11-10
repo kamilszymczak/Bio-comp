@@ -26,7 +26,7 @@ BoundaryPolicy = enum.Enum(
     'BoundaryPolicy', 'RANDOMREINIT REFUSE BOUNCE')
 
 class PSO:
-    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=0.2, gamma=0.2, delta=0.2, epsilon=0.1, max_iter=int(1e6)):
+    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1, max_iter=int(1e6)):
         """PSO constructor
 
         :param swarm_size: desired swarm size, defaults to 10

@@ -1,6 +1,7 @@
 import numpy as np
 from datetime import datetime, timedelta
 import enum
+import random
 
 # Need a vector of all weights in a decodable order in the network
 # Need a vector of all activation functions in the network
@@ -138,7 +139,8 @@ class PSO:
         # randomly initialise the position vector pointwise WITHIN the boundary of search_dimension list
         # look at Particle class: Particle.position = new value
         #! returns a new value (see _instantiate_particles)
-        raise NotImplementedError()
+        for p in self.particle:
+            p.position = [random.uniform(d[0], d[1]) for d in self.search_dimension]
 
 
     def _init_velocity(self):

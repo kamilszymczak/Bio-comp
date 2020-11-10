@@ -55,8 +55,8 @@ class PSO:
         self.max_iter = max_iter
 
 
-        self.search_dimesion = None
-        self.search_dimesion_set = False
+        self.search_dimension = None
+        self.search_dimension_set = False
         self.best = None
         self.particles = None
 
@@ -73,21 +73,21 @@ class PSO:
         """
         # set by a list of tuples || an integer -- eg. search_dimension = 3 => [(-1, 1), (-1, 1), (-1, 1)]
         if type(dimensions) is int:
-            self.search_dimesion = np.array([self.boundary for i in range(dimensions)])
+            self.search_dimension = np.array([self.boundary for i in range(dimensions)])
 
         elif type(dimensions) is list:
             #TODO check list is valid
-            self.search_dimesion = np.array(dimensions)
+            self.search_dimension = np.array(dimensions)
 
         elif isinstance(dimensions, np.ndarray):
             #TODO check numpy array validity
-            self.search_dimesion = dimensions
+            self.search_dimension = dimensions
 
         else:
-            self.search_dimesion_set = False
+            self.search_dimension_set = False
             raise ValueError("Invalid dimensions parameter")
 
-        self.search_dimesion_set = True
+        self.search_dimension_set = True
 
     def run(self):
         self._instantiate_particles()

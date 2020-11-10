@@ -37,11 +37,62 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-loss">
-<span id="welcome-to-biologically-inspired-computation-coursework-s-documentation"></span><h1>Welcome to Biologically Inspired Computation Coursework’s documentation!<a class="headerlink" href="#module-loss" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-activations"></span><dl class="py function">
-<dt id="activations.relu">
-<code class="sig-prename descclassname">activations.</code><code class="sig-name descname">relu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#activations.relu" title="Permalink to this definition">¶</a></dt>
+  <div class="section" id="module-SamModel.loss">
+<span id="welcome-to-biologically-inspired-computation-coursework-s-documentation"></span><h1>Welcome to Biologically Inspired Computation Coursework’s documentation!<a class="headerlink" href="#module-SamModel.loss" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-SamModel.activations"></span><dl class="py function">
+<dt id="SamModel.activations.cosine">
+<code class="sig-prename descclassname">SamModel.activations.</code><code class="sig-name descname">cosine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/activations.html#cosine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.activations.cosine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies cosine activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>numpy.ndarray</em>) – The matrix of weighted sum values for each neuron</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The matrix with cosine applied to each element</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="SamModel.activations.gaussian">
+<code class="sig-prename descclassname">SamModel.activations.</code><code class="sig-name descname">gaussian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/activations.html#gaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.activations.gaussian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies gaussian activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>numpy.ndarray</em>) – The matrix of weighted sum values for each neuron</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The matrix with gaussian applied to each element</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="SamModel.activations.hyperbolic_tangent">
+<code class="sig-prename descclassname">SamModel.activations.</code><code class="sig-name descname">hyperbolic_tangent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/activations.html#hyperbolic_tangent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.activations.hyperbolic_tangent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies hyperbolic tangent activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>numpy.ndarray</em>) – The matrix of weighted sum values for each neuron</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The matrix with hyperbolic tangent applied to each element</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="SamModel.activations.relu">
+<code class="sig-prename descclassname">SamModel.activations.</code><code class="sig-name descname">relu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/activations.html#relu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.activations.relu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies relu activation function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -57,8 +108,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="activations.sigmoid">
-<code class="sig-prename descclassname">activations.</code><code class="sig-name descname">sigmoid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#activations.sigmoid" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.activations.sigmoid">
+<code class="sig-prename descclassname">SamModel.activations.</code><code class="sig-name descname">sigmoid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/activations.html#sigmoid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.activations.sigmoid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies sigmoid activation function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -73,30 +124,30 @@
 </dl>
 </dd></dl>
 
-<span class="target" id="module-model"></span><dl class="py class">
-<dt id="model.ANN">
-<em class="property">class </em><code class="sig-prename descclassname">model.</code><code class="sig-name descname">ANN</code><a class="headerlink" href="#model.ANN" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-SamModel.model"></span><dl class="py class">
+<dt id="SamModel.model.ANN">
+<em class="property">class </em><code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">ANN</code><a class="reference internal" href="_modules/SamModel/model.html#ANN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.ANN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Artificial Neural Network class Implementation</p>
 <dl class="py method">
-<dt id="model.ANN.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.add" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.ANN.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#ANN.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.ANN.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new layer to the Neural Network</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>layer</strong> (<a class="reference internal" href="#model.Layer" title="model.Layer"><em>Layer</em></a>) – Add an instance of the layer class</p>
+<dd class="field-odd"><p><strong>layer</strong> (<a class="reference internal" href="#SamModel.model.Layer" title="SamModel.model.Layer"><em>Layer</em></a>) – Add an instance of the layer class</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="model.ANN.compile">
-<code class="sig-name descname">compile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.compile" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.ANN.compile">
+<code class="sig-name descname">compile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#ANN.compile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.ANN.compile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compile the Neural Network so it is ready for training or inference</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="model.ANN.one_pass">
-<code class="sig-name descname">one_pass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.one_pass" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.ANN.one_pass">
+<code class="sig-name descname">one_pass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#ANN.one_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.ANN.one_pass" title="Permalink to this definition">¶</a></dt>
 <dd><p>One pass of data in input through the Neural Network</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
@@ -106,8 +157,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="model.ANN.set_input">
-<code class="sig-name descname">set_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em>, <em class="sig-param"><span class="n">result_vector</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.ANN.set_input" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.ANN.set_input">
+<code class="sig-name descname">set_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em>, <em class="sig-param"><span class="n">result_vector</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#ANN.set_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.ANN.set_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide the input data to the ANN</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -122,23 +173,34 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="SamModel.model.ANN.set_loss_function">
+<code class="sig-name descname">set_loss_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">loss</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#ANN.set_loss_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.ANN.set_loss_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the loss to the specified function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>loss</strong> (<em>str</em>) – The loss function to use</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
-<dt id="model.ActivationFunction">
-<em class="property">class </em><code class="sig-prename descclassname">model.</code><code class="sig-name descname">ActivationFunction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.ActivationFunction" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.ActivationFunction">
+<em class="property">class </em><code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">ActivationFunction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#SamModel.model.ActivationFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>An enumeration.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="model.Layer">
-<em class="property">class </em><code class="sig-prename descclassname">model.</code><code class="sig-name descname">Layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">neurons</span></em>, <em class="sig-param"><span class="n">activation</span><span class="o">=</span><span class="default_value">'null'</span></em>, <em class="sig-param"><span class="n">use_bias</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Layer" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.Layer">
+<em class="property">class </em><code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">Layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">neurons</span></em>, <em class="sig-param"><span class="n">activation</span><span class="o">=</span><span class="default_value">'null'</span></em>, <em class="sig-param"><span class="n">use_bias</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#Layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.Layer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Layer class used to add layers to the ANN</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="model.apply_activation">
-<code class="sig-prename descclassname">model.</code><code class="sig-name descname">apply_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weighted_sum</span></em>, <em class="sig-param"><span class="n">activation_func</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.apply_activation" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.apply_activation">
+<code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">apply_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weighted_sum</span></em>, <em class="sig-param"><span class="n">activation_func</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#apply_activation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.apply_activation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply activation function to matrix</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -151,8 +213,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="model.apply_loss">
-<code class="sig-prename descclassname">model.</code><code class="sig-name descname">apply_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">y_hat</span></em>, <em class="sig-param"><span class="n">loss_func</span><span class="o">=</span><span class="default_value">'MSE'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.apply_loss" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.apply_loss">
+<code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">apply_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">y_hat</span></em>, <em class="sig-param"><span class="n">loss_func</span><span class="o">=</span><span class="default_value">'MSE'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#apply_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.apply_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the loss function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -172,14 +234,14 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="model.calculate_one_layer">
-<code class="sig-prename descclassname">model.</code><code class="sig-name descname">calculate_one_layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em>, <em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.calculate_one_layer" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.calculate_one_layer">
+<code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">calculate_one_layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_matrix</span></em>, <em class="sig-param"><span class="n">layer</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#calculate_one_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.calculate_one_layer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the output of a single layer</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_matrix</strong> (<em>numpy.ndarray</em>) – The input matrix to the layer</p></li>
-<li><p><strong>layer</strong> (<a class="reference internal" href="#model.Layer" title="model.Layer"><em>Layer</em></a>) – The layer being calculated</p></li>
+<li><p><strong>layer</strong> (<a class="reference internal" href="#SamModel.model.Layer" title="SamModel.model.Layer"><em>Layer</em></a>) – The layer being calculated</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -198,8 +260,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="model.enumerate_activation">
-<code class="sig-prename descclassname">model.</code><code class="sig-name descname">enumerate_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">activation_string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.enumerate_activation" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.enumerate_activation">
+<code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">enumerate_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">activation_string</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#enumerate_activation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.enumerate_activation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enumerate the activation function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -215,8 +277,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="model.pick_activation">
-<code class="sig-prename descclassname">model.</code><code class="sig-name descname">pick_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">activation</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.pick_activation" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.pick_activation">
+<code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">pick_activation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">activation</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#pick_activation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.pick_activation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select activation function to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -232,8 +294,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="model.weight_matrix">
-<code class="sig-prename descclassname">model.</code><code class="sig-name descname">weight_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.weight_matrix" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.model.weight_matrix">
+<code class="sig-prename descclassname">SamModel.model.</code><code class="sig-name descname">weight_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/model.html#weight_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.model.weight_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a numpy array of random weights with the specified size</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -245,13 +307,13 @@
 </dl>
 </dd></dl>
 
-<span class="target" id="module-data"></span><dl class="py class">
-<dt id="data.Data">
-<em class="property">class </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infile</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">delim</span><span class="o">=</span><span class="default_value">'\t'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data.Data" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-SamModel.data"></span><dl class="py class">
+<dt id="SamModel.data.Data">
+<em class="property">class </em><code class="sig-prename descclassname">SamModel.data.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">infile</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">delim</span><span class="o">=</span><span class="default_value">'\t'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/data.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.data.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data class to handle normalization and structure of input data</p>
 <dl class="py method">
-<dt id="data.Data.get_output">
-<code class="sig-name descname">get_output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data.Data.get_output" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.data.Data.get_output">
+<code class="sig-name descname">get_output</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/data.html#Data.get_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.data.Data.get_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Desired result vector</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -264,8 +326,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="data.Data.get_rows">
-<code class="sig-name descname">get_rows</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data.Data.get_rows" title="Permalink to this definition">¶</a></dt>
+<dt id="SamModel.data.Data.get_rows">
+<code class="sig-name descname">get_rows</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/SamModel/data.html#Data.get_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SamModel.data.Data.get_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all the rows of the datafile, excluding the outcome column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>

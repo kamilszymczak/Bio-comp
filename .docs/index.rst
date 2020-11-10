@@ -6,16 +6,16 @@
 Welcome to Biologically Inspired Computation Coursework's documentation!
 ========================================================================
 
-.. automodule:: loss
+.. automodule:: SamModel.loss
     :members:
 
-.. automodule:: activations
+.. automodule:: SamModel.activations
     :members:
 
-.. automodule:: model
+.. automodule:: SamModel.model
     :members:
 
-.. automodule:: data
+.. automodule:: SamModel.data
     :members:
 
 .. toctree::

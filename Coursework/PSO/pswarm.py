@@ -54,11 +54,13 @@ class PSO:
         self.epsilon = epsilon
         self.max_iter = max_iter
 
-        # search_dimension is a list of tuples || an integer -- eg. search_dimension = 3 => [(-1, 1), (-1, 1), (-1, 1)]
+
         self.search_dimesion = None
         self.search_dimesion_set = False
         self.best = None
         self.particles = None
+
+        self.fitness_checker = None # The arg to this is the shape of the ANN (wieghts + activation)
 
 
 
@@ -69,6 +71,7 @@ class PSO:
         :type dimensions: int / list / numpy.array
         :raises ValueError: When dimension parameter does not meet specified requirements
         """
+        # set by a list of tuples || an integer -- eg. search_dimension = 3 => [(-1, 1), (-1, 1), (-1, 1)]
         if type(dimensions) is int:
             self.search_dimesion = np.array([self.boundary for i in range(dimensions)])
 
@@ -108,12 +111,21 @@ class PSO:
 
 
     def _assess_fitness(self):
+        # evaluate and update fitness for each particle at current location 
+        #! no point updating each Particle insances self.informat_fittest here
+        # Particle class: self.fitness & self.personal_fittest_loc should be updated here
+        # update best
         raise NotImplementedError()
 
     def _update_particle(self):
+        #TODO set the informant fitness and new velocity of all particles
+        #! Doesnt move yet (this is important because the position of each particle affect how they all get a new velocity)
+        # Its ok if the particles velocity would take it out of bounds, handle that in _move_particles()
         raise NotImplementedError()
 
     def _move_particles(self):
+        #TODO change each particle position based on its velocity value
+        #TODO handle out of bounds based on policies (see BoundaryPolicy enum at top of page)
         raise NotImplementedError()
 
     def _instantiate_particles(self):
@@ -122,12 +134,18 @@ class PSO:
 
 
     def _init_position(self):
-        return 0
+        # Check the list in search_dimensions
+        # randomly initialise the position vector pointwise WITHIN the boundary of search_dimension list
+        # look at Particle class: Particle.position = new value
+        #! returns a new value (see _instantiate_particles)
         raise NotImplementedError()
 
 
     def _init_velocity(self):
-        return 0
+        #! Not the same as _move_particle (no need to consider the boundary here)
+        # randomly initialise the velocity vector (depending on velocity init policy) pointwise for the size of search_dimension list
+        # look at Particle class: Particle.velocity = new value
+        #! returns a new value (see _instantiate_particles)
         raise NotImplementedError()
 
 
@@ -135,6 +153,7 @@ class Particle:
     def __init__(self, position, velocity = None):
         self.position = position
         self.velocity = velocity
+        self.fitness = None
 
         self.personal_fittest_loc = None
         self.informat_fittest_loc = None

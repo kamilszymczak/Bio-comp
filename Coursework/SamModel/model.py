@@ -1,10 +1,17 @@
 import numpy as np
 import inspect
-import enum
+from enum import IntEnum
 from . import activations as activ
 from . import loss
 
-ActivationFunction = enum.Enum('ActivationFunction', 'NULL SIGMOID HYPERBOLIC_TANGENT COSINE GAUSSIAN RELU SOFTMAX')
+class ActivationFunction(IntEnum):
+    NULL = 0
+    SIGMOID = 1
+    HYPERBOLIC_TANGENT = 2
+    COSINE = 3
+    GAUSSIAN = 4
+    RELU = 5
+    SOFTMAX = 6
 
 activation_picker = {
     ActivationFunction.NULL: activ.null,
@@ -138,7 +145,7 @@ class ANN:
         self.layers = self.layers + [layer]
         self.compiled = False
 
-    def set_input(self, input_matrix, result_vector):
+    def set_training_input(self, input_matrix, result_vector):
         """Provide the input data to the ANN
 
         :param input_matrix: The input matrix
@@ -197,7 +204,6 @@ class ANN:
         else: 
             raise ValueError('There is no loss function defined for this key')
         
-
     def __generate_weights__(self):
         """Generates the weight matrices & bias vectors for the ANN Layers
         """
@@ -217,7 +223,7 @@ class ANN:
 class Layer:
     """Layer class used to add layers to the ANN
     """
-    def __init__(self, neurons, activation="null", use_bias=True):
+    def __init__(self, neuron_count, activation="null", use_bias=True):
         """Constuctor for Layer class
 
         :param neurons: The number of neurons in the layer
@@ -227,11 +233,20 @@ class Layer:
         :param use_bias: If you use a bias, defaults to True
         :type use_bias: bool, optional
         """
-        self.neurons = neurons
+        self.neurons = neuron_count
         self.activation = enumerate_activation(activation)
         self.use_bias = use_bias
         self.weights = None
         self.bias = None
         self.output = None
-        
+    
+    def to_vec(self):
+        if self.use_bias:
+            t = np.append(self.weights.flatten(), self.bias.flatten())
+            return  np.append(t, int(self.activation))
+        else:
+            return np.append(self.weights.flatten(), int(self.activation))
+
+    def from_vec(self):
+        raise NotImplementedError
 

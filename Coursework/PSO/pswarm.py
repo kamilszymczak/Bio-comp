@@ -147,7 +147,8 @@ class PSO:
         # randomly initialise the velocity vector (depending on velocity init policy) pointwise for the size of search_dimension list
         # look at Particle class: Particle.velocity = new value
         #! returns a new value (see _instantiate_particles)
-        raise NotImplementedError()
+        # quick naive velocity solution, needs testing
+        return [random.uniform(d[0], d[1]) for d in self.search_dimension]
 
 
 class Particle:

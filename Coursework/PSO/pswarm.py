@@ -1,6 +1,7 @@
 import numpy as np
 from datetime import datetime, timedelta
 import enum
+import random
 
 # Need a vector of all weights in a decodable order in the network
 # Need a vector of all activation functions in the network
@@ -55,8 +56,8 @@ class PSO:
         self.max_iter = max_iter
 
 
-        self.search_dimesion = None
-        self.search_dimesion_set = False
+        self.search_dimension = None
+        self.search_dimension_set = False
         self.best = None
         self.particles = None
 
@@ -73,21 +74,21 @@ class PSO:
         """
         # set by a list of tuples || an integer -- eg. search_dimension = 3 => [(-1, 1), (-1, 1), (-1, 1)]
         if type(dimensions) is int:
-            self.search_dimesion = np.array([self.boundary for i in range(dimensions)])
+            self.search_dimension = np.array([self.boundary for i in range(dimensions)])
 
         elif type(dimensions) is list:
             #TODO check list is valid
-            self.search_dimesion = np.array(dimensions)
+            self.search_dimension = np.array(dimensions)
 
         elif isinstance(dimensions, np.ndarray):
             #TODO check numpy array validity
-            self.search_dimesion = dimensions
+            self.search_dimension = dimensions
 
         else:
-            self.search_dimesion_set = False
+            self.search_dimension_set = False
             raise ValueError("Invalid dimensions parameter")
 
-        self.search_dimesion_set = True
+        self.search_dimension_set = True
 
     def run(self):
         self._instantiate_particles()
@@ -138,7 +139,7 @@ class PSO:
         # randomly initialise the position vector pointwise WITHIN the boundary of search_dimension list
         # look at Particle class: Particle.position = new value
         #! returns a new value (see _instantiate_particles)
-        raise NotImplementedError()
+        return [random.uniform(d[0], d[1]) for d in self.search_dimension]
 
 
     def _init_velocity(self):

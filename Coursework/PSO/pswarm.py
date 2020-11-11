@@ -98,7 +98,11 @@ class PSO:
 
         while controller.terminate:
             # Update best and personal fitness values based on the current positions
-            self._assess_fitness()
+            # TODO: only iterate through particles with velocity
+            for particle in self.particles:
+                self._assess_fitness(particle)
+                if self.best is None or particle.fitness > self._assess_fitness(self.best):
+                    self.best = particle
             
             # Update the informant fitness and velocity of all particles
             self._update_particle()

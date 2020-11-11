@@ -42,7 +42,7 @@
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../index.html#SamModel.data.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">:</span>
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../SamModel.html#SamModel.data.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Data class to handle normalization and structure of input data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -63,11 +63,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 
 
-    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+<div class="viewcode-block" id="Data.normalize"><a class="viewcode-back" href="../../SamModel.html#SamModel.data.Data.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">min</span><span class="p">())</span></div>
 
     <span class="c1"># returns all features except the outcome as a numpy matrix</span>
-<div class="viewcode-block" id="Data.get_rows"><a class="viewcode-back" href="../../index.html#SamModel.data.Data.get_rows">[docs]</a>    <span class="k">def</span> <span class="nf">get_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Data.get_rows"><a class="viewcode-back" href="../../SamModel.html#SamModel.data.Data.get_rows">[docs]</a>    <span class="k">def</span> <span class="nf">get_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get all the rows of the datafile, excluding the outcome column</span>
 
 <span class="sd">        :return: returns numpy ndarray of input data</span>
@@ -76,7 +76,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span></div>
 
     <span class="c1"># returns outcome column as a numpy matrix</span>
-<div class="viewcode-block" id="Data.get_output"><a class="viewcode-back" href="../../index.html#SamModel.data.Data.get_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Data.get_output"><a class="viewcode-back" href="../../SamModel.html#SamModel.data.Data.get_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Desired result vector</span>
 
 <span class="sd">        :return: numpy ndarray with the actual results</span>

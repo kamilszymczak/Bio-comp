@@ -41,11 +41,18 @@
   <h1>Source code for SamModel.model</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntEnum</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">activations</span> <span class="k">as</span> <span class="n">activ</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">loss</span>
 
-<span class="n">ActivationFunction</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span><span class="s1">&#39;ActivationFunction&#39;</span><span class="p">,</span> <span class="s1">&#39;NULL SIGMOID HYPERBOLIC_TANGENT COSINE GAUSSIAN RELU SOFTMAX&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="ActivationFunction"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.ActivationFunction">[docs]</a><span class="k">class</span> <span class="nc">ActivationFunction</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="n">NULL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">SIGMOID</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">HYPERBOLIC_TANGENT</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">COSINE</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">GAUSSIAN</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">RELU</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">SOFTMAX</span> <span class="o">=</span> <span class="mi">6</span></div>
 
 <span class="n">activation_picker</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">ActivationFunction</span><span class="o">.</span><span class="n">NULL</span><span class="p">:</span> <span class="n">activ</span><span class="o">.</span><span class="n">null</span><span class="p">,</span>
@@ -71,7 +78,7 @@
     <span class="s1">&#39;meansquarederror&#39;</span><span class="p">:</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean_squared_error</span>
 <span class="p">}</span>
 
-<div class="viewcode-block" id="weight_matrix"><a class="viewcode-back" href="../../index.html#SamModel.model.weight_matrix">[docs]</a><span class="k">def</span> <span class="nf">weight_matrix</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="weight_matrix"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.weight_matrix">[docs]</a><span class="k">def</span> <span class="nf">weight_matrix</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a numpy array of random weights with the specified size</span>
 
 <span class="sd">        :param x: number of rows in the desired matrix</span>
@@ -81,7 +88,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span></div>
 
-<div class="viewcode-block" id="calculate_one_layer"><a class="viewcode-back" href="../../index.html#SamModel.model.calculate_one_layer">[docs]</a><span class="k">def</span> <span class="nf">calculate_one_layer</span><span class="p">(</span><span class="n">input_matrix</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
+<div class="viewcode-block" id="calculate_one_layer"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.calculate_one_layer">[docs]</a><span class="k">def</span> <span class="nf">calculate_one_layer</span><span class="p">(</span><span class="n">input_matrix</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculate the output of a single layer</span>
 
 <span class="sd">    :param input_matrix: The input matrix to the layer</span>
@@ -103,7 +110,7 @@
         <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="n">layer</span><span class="o">.</span><span class="n">bias</span>
     <span class="k">return</span> <span class="n">apply_activation</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">layer</span><span class="o">.</span><span class="n">activation</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="apply_activation"><a class="viewcode-back" href="../../index.html#SamModel.model.apply_activation">[docs]</a><span class="k">def</span> <span class="nf">apply_activation</span><span class="p">(</span><span class="n">weighted_sum</span><span class="p">,</span> <span class="n">activation_func</span><span class="p">):</span>
+<div class="viewcode-block" id="apply_activation"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.apply_activation">[docs]</a><span class="k">def</span> <span class="nf">apply_activation</span><span class="p">(</span><span class="n">weighted_sum</span><span class="p">,</span> <span class="n">activation_func</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Apply activation function to matrix</span>
 
 <span class="sd">    :param weighted_sum: The matrix of the sum of input * weight + bias</span>
@@ -116,7 +123,7 @@
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid activation function&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">af</span><span class="p">(</span><span class="n">weighted_sum</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="apply_loss"><a class="viewcode-back" href="../../index.html#SamModel.model.apply_loss">[docs]</a><span class="k">def</span> <span class="nf">apply_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="s1">&#39;MSE&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="apply_loss"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.apply_loss">[docs]</a><span class="k">def</span> <span class="nf">apply_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="s1">&#39;MSE&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Apply the loss function</span>
 
 <span class="sd">    :param y: the actual labels</span>
@@ -131,7 +138,7 @@
     <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_picker</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">loss_func</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_hat</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="pick_activation"><a class="viewcode-back" href="../../index.html#SamModel.model.pick_activation">[docs]</a><span class="k">def</span> <span class="nf">pick_activation</span><span class="p">(</span><span class="n">activation</span><span class="p">):</span>
+<div class="viewcode-block" id="pick_activation"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.pick_activation">[docs]</a><span class="k">def</span> <span class="nf">pick_activation</span><span class="p">(</span><span class="n">activation</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Select activation function to use</span>
 
 <span class="sd">    :param activation: The activation function identifier</span>
@@ -141,7 +148,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">activation_picker</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="enumerate_activation"><a class="viewcode-back" href="../../index.html#SamModel.model.enumerate_activation">[docs]</a><span class="k">def</span> <span class="nf">enumerate_activation</span><span class="p">(</span><span class="n">activation_string</span><span class="p">):</span>
+<div class="viewcode-block" id="enumerate_activation"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.enumerate_activation">[docs]</a><span class="k">def</span> <span class="nf">enumerate_activation</span><span class="p">(</span><span class="n">activation_string</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enumerate the activation function</span>
 
 <span class="sd">    :param activation_string: string representing the activation function</span>
@@ -153,7 +160,7 @@
     <span class="k">return</span> <span class="n">activation_enum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">activation_string</span><span class="p">,</span> <span class="n">ActivationFunction</span><span class="o">.</span><span class="n">NULL</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ANN"><a class="viewcode-back" href="../../index.html#SamModel.model.ANN">[docs]</a><span class="k">class</span> <span class="nc">ANN</span><span class="p">:</span>
+<div class="viewcode-block" id="ANN"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.ANN">[docs]</a><span class="k">class</span> <span class="nc">ANN</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Artificial Neural Network class Implementation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -168,7 +175,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="s1">&#39;MSE&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="ANN.add"><a class="viewcode-back" href="../../index.html#SamModel.model.ANN.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
+<div class="viewcode-block" id="ANN.add"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.ANN.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new layer to the Neural Network</span>
 
 <span class="sd">        :param layer: Add an instance of the layer class</span>
@@ -179,7 +186,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">+</span> <span class="p">[</span><span class="n">layer</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compiled</span> <span class="o">=</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ANN.set_input"><a class="viewcode-back" href="../../index.html#SamModel.model.ANN.set_input">[docs]</a>    <span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_matrix</span><span class="p">,</span> <span class="n">result_vector</span><span class="p">):</span>
+<div class="viewcode-block" id="ANN.set_training_input"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.ANN.set_training_input">[docs]</a>    <span class="k">def</span> <span class="nf">set_training_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_matrix</span><span class="p">,</span> <span class="n">result_vector</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide the input data to the ANN</span>
 
 <span class="sd">        :param input_matrix: The input matrix</span>
@@ -201,7 +208,7 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Weights might have been generated for a different shape input, please check the columns of your input&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">result_vector</span>    </div>
         
-<div class="viewcode-block" id="ANN.compile"><a class="viewcode-back" href="../../index.html#SamModel.model.ANN.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ANN.compile"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.ANN.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compile the Neural Network so it is ready for training or inference</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -212,7 +219,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">compiled</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model Compiled!&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ANN.one_pass"><a class="viewcode-back" href="../../index.html#SamModel.model.ANN.one_pass">[docs]</a>    <span class="k">def</span> <span class="nf">one_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ANN.one_pass"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.ANN.one_pass">[docs]</a>    <span class="k">def</span> <span class="nf">one_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;One pass of data in input through the Neural Network</span>
 
 <span class="sd">        :raises Exception: Not Compiled exception</span>
@@ -227,7 +234,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">output</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">apply_loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ANN.set_loss_function"><a class="viewcode-back" href="../../index.html#SamModel.model.ANN.set_loss_function">[docs]</a>    <span class="k">def</span> <span class="nf">set_loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+<div class="viewcode-block" id="ANN.set_loss_function"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.ANN.set_loss_function">[docs]</a>    <span class="k">def</span> <span class="nf">set_loss_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the loss to the specified function</span>
 
 <span class="sd">        :param loss: The loss function to use</span>
@@ -238,7 +245,6 @@
         <span class="k">else</span><span class="p">:</span> 
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;There is no loss function defined for this key&#39;</span><span class="p">)</span></div>
         
-
     <span class="k">def</span> <span class="nf">__generate_weights__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generates the weight matrices &amp; bias vectors for the ANN Layers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -255,10 +261,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weight_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">neurons</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">neurons</span><span class="p">)</span></div>
         
 
-<div class="viewcode-block" id="Layer"><a class="viewcode-back" href="../../index.html#SamModel.model.Layer">[docs]</a><span class="k">class</span> <span class="nc">Layer</span><span class="p">:</span>
+<div class="viewcode-block" id="Layer"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.Layer">[docs]</a><span class="k">class</span> <span class="nc">Layer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Layer class used to add layers to the ANN</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neurons</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;null&quot;</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neuron_count</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;null&quot;</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constuctor for Layer class</span>
 
 <span class="sd">        :param neurons: The number of neurons in the layer</span>
@@ -268,13 +274,22 @@
 <span class="sd">        :param use_bias: If you use a bias, defaults to True</span>
 <span class="sd">        :type use_bias: bool, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">neurons</span> <span class="o">=</span> <span class="n">neurons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neurons</span> <span class="o">=</span> <span class="n">neuron_count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">enumerate_activation</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span> <span class="o">=</span> <span class="n">use_bias</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="kc">None</span></div>
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+    
+<div class="viewcode-block" id="Layer.to_vec"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.Layer.to_vec">[docs]</a>    <span class="k">def</span> <span class="nf">to_vec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+            <span class="k">return</span>  <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Layer.from_vec"><a class="viewcode-back" href="../../SamModel.html#SamModel.model.Layer.from_vec">[docs]</a>    <span class="k">def</span> <span class="nf">from_vec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 
 </pre></div>
 

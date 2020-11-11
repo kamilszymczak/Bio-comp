@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PSO.pswarm &#8212; Biologically Inspired Computation Coursework 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Biologically Inspired Computation Coursework 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PSO.pswarm</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for PSO.pswarm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># Need a vector of all weights in a decodable order in the network</span>
+<span class="c1"># Need a vector of all activation functions in the network</span>
+
+<span class="c1"># Need to define the boundaries (-1, 1)</span>
+
+
+
+<span class="c1"># need to define the behaviour when you hit a boundary (random re-intit, bounce, reject dimensions out of bounds)</span>
+
+<span class="c1"># define movement behaviour</span>
+
+<span class="c1"># information sharing </span>
+
+<span class="c1"># sub boundary groups: define the inner boundaries for subsets of particles</span>
+
+
+<span class="n">TerminationPolicy</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span>
+    <span class="s1">&#39;TerminationPolicy&#39;</span><span class="p">,</span> <span class="s1">&#39;ITERATIONS DURATION CONVERGENCE&#39;</span><span class="p">)</span>
+
+<span class="n">BoundaryPolicy</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span>
+    <span class="s1">&#39;BoundaryPolicy&#39;</span><span class="p">,</span> <span class="s1">&#39;RANDOMREINIT REFUSE BOUNCE&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PSO"><a class="viewcode-back" href="../../PSO.html#PSO.pswarm.PSO">[docs]</a><span class="k">class</span> <span class="nc">PSO</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">swarm_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;PSO constructor</span>
+
+<span class="sd">        :param swarm_size: desired swarm size, defaults to 10</span>
+<span class="sd">        :type swarm_size: int, optional</span>
+<span class="sd">        :param bound: limits of dimensionality, defaults to (1, -1)</span>
+<span class="sd">        :type bound: tuple, optional</span>
+<span class="sd">        :param alpha: proportion of velocity to be retained, defaults to 0.1</span>
+<span class="sd">        :type alpha: float, optional</span>
+<span class="sd">        :param beta: proportion of personal best to be retained, defaults to 0.2</span>
+<span class="sd">        :type beta: float, optional</span>
+<span class="sd">        :param gamma: proportion of the informants’ best to be retained, defaults to 0.2</span>
+<span class="sd">        :type gamma: float, optional</span>
+<span class="sd">        :param delta: proportion of global best to be retained, defaults to 0.2</span>
+<span class="sd">        :type delta: float, optional</span>
+<span class="sd">        :param epsilon: jump size of a particle, defaults to 0.1</span>
+<span class="sd">        :type epsilon: float, optional</span>
+<span class="sd">        :param max_iter: The maximum number of iterations before termination, defaults to 0.1</span>
+<span class="sd">        :type max_iter: int, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">swarm_size</span> <span class="o">=</span> <span class="n">swarm_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="o">=</span> <span class="n">bound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension_set</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particles</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitness_checker</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># The arg to this is the shape of the ANN (wieghts + activation)</span>
+
+
+
+<div class="viewcode-block" id="PSO.set_search_dimentions"><a class="viewcode-back" href="../../PSO.html#PSO.pswarm.PSO.set_search_dimentions">[docs]</a>    <span class="k">def</span> <span class="nf">set_search_dimentions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Specify the dimensionality of the search</span>
+
+<span class="sd">        :param dimensions: define dimensionality. Either with an int (using default boundaries), or a list/np.array of tuples descriping the boundaries for each dimension</span>
+<span class="sd">        :type dimensions: int / list / numpy.array</span>
+<span class="sd">        :raises ValueError: When dimension parameter does not meet specified requirements</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set by a list of tuples || an integer -- eg. search_dimension = 3 =&gt; [(-1, 1), (-1, 1), (-1, 1)]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)])</span>
+
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="c1">#TODO check list is valid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="c1">#TODO check numpy array validity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension</span> <span class="o">=</span> <span class="n">dimensions</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension_set</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid dimensions parameter&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension_set</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="PSO.run"><a class="viewcode-back" href="../../PSO.html#PSO.pswarm.PSO.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instantiate_particles</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">previous_best</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best</span>
+        <span class="n">controller</span> <span class="o">=</span> <span class="n">IterationController</span><span class="p">(</span><span class="n">TerminationPolicy</span><span class="o">.</span><span class="n">ITERATIONS</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">controller</span><span class="o">.</span><span class="n">terminate</span><span class="p">:</span>
+            <span class="c1"># Update best and personal fitness values based on the current positions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_assess_fitness</span><span class="p">()</span>
+            
+            <span class="c1"># Update the informant fitness and velocity of all particles</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_particle</span><span class="p">()</span>
+
+            <span class="c1"># Move the particles based on their velocity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_move_particles</span><span class="p">()</span>
+
+            <span class="n">controller</span><span class="o">.</span><span class="n">next_iteration</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best</span><span class="p">)</span></div>
+
+
+
+
+    <span class="k">def</span> <span class="nf">_assess_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># evaluate and update fitness for each particle at current location </span>
+        <span class="c1">#! no point updating each Particle insances self.informat_fittest here</span>
+        <span class="c1"># Particle class: self.fitness &amp; self.personal_fittest_loc should be updated here</span>
+        <span class="c1"># update best</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_particle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#TODO set the informant fitness and new velocity of all particles</span>
+        <span class="c1">#! Doesnt move yet (this is important because the position of each particle affect how they all get a new velocity)</span>
+        <span class="c1"># Its ok if the particles velocity would take it out of bounds, handle that in _move_particles()</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_move_particles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#TODO change each particle position based on its velocity value</span>
+        <span class="c1">#TODO handle out of bounds based on policies (see BoundaryPolicy enum at top of page)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_instantiate_particles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#depends on set_search_dimensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particles</span> <span class="o">=</span> <span class="p">[</span><span class="n">Particle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_position</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_velocity</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swarm_size</span><span class="p">)]</span>
+
+
+    <span class="k">def</span> <span class="nf">_init_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Check the list in search_dimensions</span>
+        <span class="c1"># randomly initialise the position vector pointwise WITHIN the boundary of search_dimension list</span>
+        <span class="c1"># look at Particle class: Particle.position = new value</span>
+        <span class="c1">#! returns a new value (see _instantiate_particles)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">_init_velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#! Not the same as _move_particle (no need to consider the boundary here)</span>
+        <span class="c1"># randomly initialise the velocity vector (depending on velocity init policy) pointwise for the size of search_dimension list</span>
+        <span class="c1"># look at Particle class: Particle.velocity = new value</span>
+        <span class="c1">#! returns a new value (see _instantiate_particles)</span>
+        <span class="c1"># quick naive velocity solution, needs testing</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_dimension</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Particle"><a class="viewcode-back" href="../../PSO.html#PSO.pswarm.Particle">[docs]</a><span class="k">class</span> <span class="nc">Particle</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">velocity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="n">velocity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">personal_fittest_loc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">informat_fittest_loc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">informants</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="FitnessLoc"><a class="viewcode-back" href="../../PSO.html#PSO.pswarm.FitnessLoc">[docs]</a><span class="k">class</span> <span class="nc">FitnessLoc</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">fitness</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="n">fitness</span>   </div>
+
+<div class="viewcode-block" id="IterationController"><a class="viewcode-back" href="../../PSO.html#PSO.pswarm.IterationController">[docs]</a><span class="k">class</span> <span class="nc">IterationController</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">termination_policy</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_fitness_delta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_delta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">termination_policy</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span> <span class="o">=</span> <span class="p">[</span><span class="n">termination_policy</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span> <span class="o">=</span> <span class="n">termination_policy</span>
+        
+        <span class="k">if</span> <span class="n">TerminationPolicy</span><span class="o">.</span><span class="n">ITERATIONS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">max_iter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Max iteration undefined&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">TerminationPolicy</span><span class="o">.</span><span class="n">DURATION</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">time_delta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time delta undefined&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">TerminationPolicy</span><span class="o">.</span><span class="n">CONVERGENCE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">min_fitness_delta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fitness delta undefined&quot;</span><span class="p">)</span>
+
+        
+        <span class="c1"># Loop until terminate is true</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Number of iterations so far</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_iter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+
+        <span class="c1"># The fitness from the last iteration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_fitness_delta</span> <span class="o">=</span> <span class="n">min_fitness_delta</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_delta</span> <span class="o">=</span> <span class="n">time_delta</span>
+
+<div class="viewcode-block" id="IterationController.next_iteration"><a class="viewcode-back" href="../../PSO.html#PSO.pswarm.IterationController.next_iteration">[docs]</a>    <span class="k">def</span> <span class="nf">next_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitness_delta</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">TerminationPolicy</span><span class="o">.</span><span class="n">ITERATIONS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iter</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">TerminationPolicy</span><span class="o">.</span><span class="n">DURATION</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span><span class="p">:</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_delta</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">TerminationPolicy</span><span class="o">.</span><span class="n">CONVERGENCE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination_policy</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_fitness_delta</span> <span class="o">&gt;=</span> <span class="n">fitness_delta</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_iter</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Biologically Inspired Computation Coursework 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PSO.pswarm</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Sam Fay-Hunt, Kamil Szymczak.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

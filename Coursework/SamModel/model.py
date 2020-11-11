@@ -133,6 +133,7 @@ class ANN:
         self.y_hat = None
         self.loss_fn = 'MSE'
         self.loss = None
+        self.decode_key = None
 
     def add(self, layer):
         """Add a new layer to the Neural Network
@@ -203,21 +204,47 @@ class ANN:
             self.loss_fn = loss
         else: 
             raise ValueError('There is no loss function defined for this key')
-        
+
+    def vectorize(self):
+        if not self.compiled:
+            raise Exception('Compile model before producing a vector.')
+
+
+    
+    def decode_vec(self, vec):
+        """Decode a weight vector into a neural network
+
+        :param vec: The vector representing all the activations, biases, and weights
+        :type vec: numpy.array
+        """
+        sub_vec = vec
+        for i in range(len(self.layers)):
+            input_dimension = self.layers[i].input_dimension
+            columns = self.layers[i].neurons
+            layer_vec_size = 1
+            if self.layers[i].use_bias:
+                layer_vec_size += self.layers[i].neurons
+            layer_vec_size += input_dimension * columns
+            self.layers[i].to_vec(sub_vec[:layer_vec_size])
+            sub_vec = sub_vec[layer_vec_size:]
+
+
     def __generate_weights__(self):
         """Generates the weight matrices & bias vectors for the ANN Layers
         """
 
-        # raise exception if no input
+        #TODO raise exception if no input
         
         # special case for weights & bias from input layer
+        self.layers[0].input_dimension = self.input.shape[1]
         self.layers[0].bias = 2*np.random.rand(self.layers[0].neurons)-1
-        self.layers[0].weights = weight_matrix(self.input.shape[1], self.layers[0].neurons)
+        self.layers[0].weights = weight_matrix(self.layers[0].input_dimension, self.layers[0].neurons)
         
         # Construct weight matrices & bias of each layer
         for i in range(1, len(self.layers)):
+            self.layers[i].input_dimension = self.layers[i-1].neurons
             self.layers[i].bias = 2*np.random.rand(self.layers[i].neurons)-1
-            self.layers[i].weights = weight_matrix(self.layers[i-1].neurons, self.layers[i].neurons)
+            self.layers[i].weights = weight_matrix(self.layers[i].input_dimension, self.layers[i].neurons)
         
 
 class Layer:
@@ -236,17 +263,33 @@ class Layer:
         self.neurons = neuron_count
         self.activation = enumerate_activation(activation)
         self.use_bias = use_bias
+
+        self.input_dimension = None
         self.weights = None
         self.bias = None
         self.output = None
     
     def to_vec(self):
+        """Convert the layer into a vector
+
+        :return: layer vector
+        :rtype: numpy.array
+        """
         if self.use_bias:
-            t = np.append(self.weights.flatten(), self.bias.flatten())
-            return  np.append(t, int(self.activation))
+            t = np.append(int(self.activation), self.bias.flatten())
+            return np.append(t, self.weights.flatten())
         else:
-            return np.append(self.weights.flatten(), int(self.activation))
+            return np.append(int(self.activation), self.weights.flatten())
 
-    def from_vec(self):
-        raise NotImplementedError
+    def from_vec(self, vec):
+        """Convert a vector into a layer
 
+        :param vec: a vector describing the layers activation function, bias, and weights
+        :type vec: numpy.array
+        """
+        self.activation = ActivationFunction(round(vec[0]))
+        weights_position = 1
+        if self.use_bias:
+            self.bias = vec[1:self.neurons+1]
+            weights_position += len(self.bias)
+        self.weights = vec[weights_position:].reshape(self.input_dimension, self.neurons)

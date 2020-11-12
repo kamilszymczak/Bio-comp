@@ -98,8 +98,10 @@ class PSO:
 
         while controller.terminate:
             # Update best and personal fitness values based on the current positions
-            # TODO: only iterate through particles with velocity
+            # only iterate through particles that will move, thus continue if all velocities of a given particle are 0
             for particle in self.particles:
+                if not any(particle.velocity != 0):
+                    continue
                 self._assess_fitness(particle)
                 if self.best is None or particle.fitness > self._assess_fitness(self.best):
                     self.best = particle

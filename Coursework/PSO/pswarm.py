@@ -1,3 +1,4 @@
+from functools import total_ordering
 import numpy as np
 from datetime import datetime, timedelta
 import enum
@@ -59,9 +60,10 @@ class PSO:
         self.search_dimension = None
         self.search_dimension_set = False
         self.best = None
+        self.previous_best = None
         self.particles = None
 
-        self.fitness_checker = None # The arg to this is the shape of the ANN (wieghts + activation)
+        self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
 
 
 
@@ -99,13 +101,8 @@ class PSO:
         while controller.terminate:
             # Update best and personal fitness values based on the current positions
             # only iterate through particles that will move, thus continue if all velocities of a given particle are 0
-            for particle in self.particles:
-                if not any(particle.velocity != 0):
-                    continue
-                self._assess_fitness(particle)
-                if self.best is None or particle.fitness > self._assess_fitness(self.best):
-                    self.best = particle
-            
+            self._assess_fitness()
+
             # Update the informant fitness and velocity of all particles
             self._update_particle()
 
@@ -119,10 +116,19 @@ class PSO:
 
     def _assess_fitness(self):
         # evaluate and update fitness for each particle at current location 
-        #! no point updating each Particle insances self.informat_fittest here
-        # Particle class: self.fitness & self.personal_fittest_loc should be updated here
+        # Particle class: self.fitness should be updated here
         # update best
-        raise NotImplementedError()
+        for particle in self.particles:
+            
+            if not any(particle.velocity != 0):
+                continue
+
+            particle.assess_fitness(self.fitness_fn)
+
+            if self.best is None or particle.fitness > self.best:
+                self.best = FitnessLoc(particle.position, particle.fitness)
+
+
 
     def _update_particle(self):
         #TODO set the informant fitness and new velocity of all particles
@@ -167,10 +173,40 @@ class Particle:
         self.informat_fittest_loc = None
         self.informants = None
 
+    def assess_fitness(self, fitness_fn):
+        """Assess the fitness of this particle
+
+        :param fitness_fn: the function to call to produce a fitness value from the model, this function should take a vector describing all the model parameters as an arg
+        :type fitness_fn: np.array -> float
+        """
+        # position describes the neural networks parameters
+        self.fitness = FitnessLoc(self.position, fitness_fn(self.position))
+
+        if self.fitness > self.personal_fittest_loc:
+            self.personal_fittest_loc = FitnessLoc(self.position, self.fitness)
+
+
+
+@total_ordering
 class FitnessLoc:
+    """A comparable class to store a fitness value and vector (position)
+    """
     def __init__(self, location, fitness):
         self.location = location
         self.fitness = fitness   
+
+    def _is_valid_operand(self, other):
+        return(hasattr(other, "fitness") and hasattr(other, "location"))
+
+    def __eq__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return self.fitness == other.fitness
+
+    def __lt__(self, other):
+        if not self._is_valid_operand(other):
+            return NotImplemented
+        return self.fitness < other.fitness
 
 class IterationController:
     def __init__(self, termination_policy, max_iter=None, min_fitness_delta=None, time_delta=None):
@@ -191,7 +227,6 @@ class IterationController:
         if TerminationPolicy.CONVERGENCE in self.termination_policy:
             if min_fitness_delta is None:
                 raise ValueError("Fitness delta undefined")
-
         
         # Loop until terminate is true
         self.terminate = False
@@ -202,11 +237,14 @@ class IterationController:
 
         # The fitness from the last iteration
         self.min_fitness_delta = min_fitness_delta
+        self.current_fitness_delta = None
+        self.got_fitness_delta = False
 
         self.start_time = datetime.now()
         self.time_delta = time_delta
 
-    def next_iteration(self, fitness_delta):
+
+    def next_iteration(self, fitness_delta=None):
 
         if TerminationPolicy.ITERATIONS in self.termination_policy:
             if self.max_iter < self.current_iter:
@@ -218,9 +256,21 @@ class IterationController:
                 self.terminate = True
 
         if TerminationPolicy.CONVERGENCE in self.termination_policy:
-            if self.min_fitness_delta >= fitness_delta:
+            if fitness_delta is not None and self.min_fitness_delta >= fitness_delta:
                 self.terminate = True
+            elif self.got_fitness_delta:
+                self.got_fitness_delta = False
+                if self.min_fitness_delta >= self.current_fitness_delta:
+                    self.terminate = True
+            else: 
+                raise ValueError('Fitness delta unspecified')
 
         self.current_iter += 1
 
+        def __iter__(self):
+            return self
 
+        def __next__(self):
+            self.next_iteration()
+            if self.terminate is True:
+               raise StopIteration 

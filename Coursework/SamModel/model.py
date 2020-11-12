@@ -125,7 +125,7 @@ class ANN:
     def __init__(self):
         """Construct a new sequential Artificial Neural Network
         """
-        self.layers=[]
+        self.layers = []
         self.input=None
         self.y=None
         self.input_column_size=None
@@ -206,8 +206,20 @@ class ANN:
             raise ValueError('There is no loss function defined for this key')
 
     def vectorize(self):
+        """Produce a 1D vector describing this neural network parameters
+
+        :raises Exception: Not compiled exception
+        :return: 1D vector of the neural network parameters
+        :rtype: numpy.array
+        """
         if not self.compiled:
             raise Exception('Compile model before producing a vector.')
+        vec = []
+        for layer in self.layers:
+            vec.append(layer.to_vec())
+        
+        return np.hstack(np.array(vec))
+
 
 
     

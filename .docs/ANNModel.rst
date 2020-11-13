@@ -1,29 +1,10 @@
 ANNModel package
 ================
 
-Submodules
-----------
+Module contents
+---------------
 
-ANNModel.activations module
----------------------------
-
-.. automodule:: ANNModel.activations
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-ANNModel.data module
---------------------
-
-.. automodule:: ANNModel.data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-ANNModel.loss module
---------------------
-
-.. automodule:: ANNModel.loss
+.. automodule:: ANNModel
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,10 +17,28 @@ ANNModel.model module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+ANNModel.activations module
+---------------------------
 
-.. automodule:: ANNModel
+.. automodule:: ANNModel.activations
    :members:
    :undoc-members:
    :show-inheritance:
+
+ANNModel.loss module
+--------------------
+
+.. automodule:: ANNModel.loss
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+ANNModel.data module
+--------------------
+
+.. automodule:: ANNModel.data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

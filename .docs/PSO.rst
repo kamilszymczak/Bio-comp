@@ -1,8 +1,16 @@
 PSO package
 ===========
 
-Submodules
-----------
+Module contents
+---------------
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+.. automodule:: PSO
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 PSO.pswarm module
 -----------------
@@ -12,10 +20,12 @@ PSO.pswarm module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
-.. automodule:: PSO
+PSO.psobehaviour module
+-----------------------
+
+.. automodule:: PSO.psobehaviour
    :members:
    :undoc-members:
    :show-inheritance:
+

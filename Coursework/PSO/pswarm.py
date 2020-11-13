@@ -92,6 +92,7 @@ class PSO:
 
         self.search_dimension_set = True
 
+
     def run(self):
         self._instantiate_particles()
         self.best = None

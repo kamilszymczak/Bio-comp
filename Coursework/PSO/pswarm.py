@@ -119,13 +119,13 @@ class PSO:
         for particle in self.particles:
             prev_fittest_loc = particle.personal_fittest_loc
             prev_fittest_loc_informants = particle.informat_fittest_loc
-            prev_fittest_loc_any = self.best
             for i in range(len(search_dimension)):
                 b = random.uniform(0.0, self.beta)
                 c = random.uniform(0.0, self.gamma)
                 d = random.uniform(0.0, self.delta)
-                particle.velocity[i] = 
-        raise NotImplementedError()
+                #TODO once informants implemented c*(...) part might need to be corrected
+                particle.velocity[i] = alpha * particle.velocity[i] + b*(prev_fittest_loc[i] - particle.position[i]) + c*(prev_fittest_loc_informants[i] - particle.position[i]) + d*(self.best[i] - particle.position[i])
+
 
     def _move_particles(self):
         #TODO change each particle position based on its velocity value

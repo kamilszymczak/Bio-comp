@@ -116,6 +116,15 @@ class PSO:
         #TODO set the informant fitness and new velocity of all particles
         #! Doesnt move yet (this is important because the position of each particle affect how they all get a new velocity)
         # Its ok if the particles velocity would take it out of bounds, handle that in _move_particles()
+        for particle in self.particles:
+            prev_fittest_loc = particle.personal_fittest_loc
+            prev_fittest_loc_informants = particle.informat_fittest_loc
+            prev_fittest_loc_any = self.best
+            for i in range(len(search_dimension)):
+                b = random.uniform(0.0, self.beta)
+                c = random.uniform(0.0, self.gamma)
+                d = random.uniform(0.0, self.delta)
+                particle.velocity[i] = 
         raise NotImplementedError()
 
     def _move_particles(self):
@@ -160,6 +169,7 @@ class Particle:
 
         self.personal_fittest_loc = None
         self.informat_fittest_loc = None
+        #TODO assign informants
         self.informants = None
 
     def assess_fitness(self, fitness_fn):

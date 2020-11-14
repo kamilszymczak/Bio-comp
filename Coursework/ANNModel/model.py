@@ -1,5 +1,6 @@
 import numpy as np
 import inspect
+import itertools
 from enum import IntEnum
 from tqdm.autonotebook import tqdm
 from . import activations as activ
@@ -234,7 +235,7 @@ class ANN:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
             layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons * layer.input_dimension)])
             dimension_vec += layer_vec
-        return dimension_vec
+        return list(itertools.chain(*dimension_vec))
 
 
     def assess_fitness(self, vec):

@@ -228,6 +228,11 @@ class ANN:
 
     
     def dimension_vec(self):
+        """Get a list describing the search dimensions to explore
+
+        :return: a list of tuples each containing an upper and lower bound to search
+        :rtype: list[tuple(float, float)]
+        """
         dimension_vec = []
         for layer in self.layers:
             layer_vec = [[(0.0, 5.0)]]

@@ -54,7 +54,6 @@ class TerminationPolicyManager:
         :raises ValueError: Time delta undefined
         :raises ValueError: Fitness delta undefined
     """
-
     def __init__(self, termination_policy, max_iter=None, min_fitness_delta=None, time_delta=None):
         if type(termination_policy) is not list:
             self.termination_policy = [termination_policy]
@@ -87,6 +86,8 @@ class TerminationPolicyManager:
 
         self.start_time = datetime.now()
         self.time_delta = time_delta
+
+    #TODO implement logic for a loading bar during optimisation
 
     def next_iteration(self, fitness_delta=None):
         """Step the termination policy manager forward

@@ -48,19 +48,15 @@ class PSO:
         """Specify the dimensionality of the search
 
         :param dimensions: define dimensionality. Either with an int (using default boundaries), or a list/np.array of tuples descriping the boundaries for each dimension
-        :type dimensions: int / list / numpy.array
+        :type dimensions: int / list
         :raises ValueError: When dimension parameter does not meet specified requirements
         """
         # set by a list of tuples || an integer -- eg. search_dimension = 3 => [(-1, 1), (-1, 1), (-1, 1)]
         if type(dimensions) is int:
-            self.search_dimension = np.array([self.boundary for i in range(dimensions)])
+            self.search_dimension = [self.boundary for _ in range(dimensions)]
 
         elif type(dimensions) is list:
             #TODO check list is valid
-            self.search_dimension = np.array(dimensions)
-
-        elif isinstance(dimensions, np.ndarray):
-            #TODO check numpy array validity
             self.search_dimension = dimensions
 
         else:

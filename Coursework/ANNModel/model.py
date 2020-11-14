@@ -1,8 +1,10 @@
 import numpy as np
 import inspect
 from enum import IntEnum
+from tqdm.autonotebook import tqdm
 from . import activations as activ
 from . import loss
+
 
 class ActivationFunction(IntEnum):
     NULL = 0
@@ -179,6 +181,7 @@ class ANN:
         self.compiled = True
         print("Model Compiled!")
 
+
     def one_pass(self):
         """One pass of data in input through the Neural Network
 
@@ -187,12 +190,14 @@ class ANN:
         if not self.compiled:
             raise Exception("The neural network must be compiled before performing training or inference.")
         # Input layer special case
+        pbar = tqdm(range(1, len(self.layers)), desc='Running model...', position=0, leave=True)
         self.layers[0].output = calculate_one_layer(self.input, self.layers[0])
         # Hidden layers -> output layer
-        for i in range(1, len(self.layers)):
+        for i in pbar:
             self.layers[i].output = calculate_one_layer(self.layers[i-1].output, self.layers[i])
         self.y_hat = self.layers[-1].output
         self.loss = apply_loss(self.y, self.y_hat, loss_func=self.loss_fn)
+
 
     def set_loss_function(self, loss):
         """Set the loss to the specified function
@@ -218,11 +223,18 @@ class ANN:
         for layer in self.layers:
             vec.append(layer.to_vec())
         
-        return np.hstack(np.array(vec))
+        return np.hstack(vec)
 
     
-    def vec_dimensions(self):
-        raise NotImplementedError
+    def dimension_vec(self):
+        dimension_vec = []
+        for layer in self.layers:
+            layer_vec = [[(0.0, 5.0)]]
+            if layer.use_bias:
+                layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
+            layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons * layer.input_dimension)])
+            dimension_vec += layer_vec
+        return dimension_vec
 
 
     def assess_fitness(self, vec):
@@ -250,7 +262,7 @@ class ANN:
             columns = self.layers[i].neurons
             layer_vec_size = 1
             if self.layers[i].use_bias:
-                layer_vec_size += self.layers[i].neurons
+                layer_vec_size += columns
             layer_vec_size += input_dimension * columns
             self.layers[i].from_vec(sub_vec[:layer_vec_size])
             sub_vec = sub_vec[layer_vec_size:]

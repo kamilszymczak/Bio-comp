@@ -117,6 +117,10 @@ class PSO:
         #! Doesnt move yet (this is important because the position of each particle affect how they all get a new velocity)
         # Its ok if the particles velocity would take it out of bounds, handle that in _move_particles()
         for particle in self.particles:
+
+            if not any(particle.velocity != 0):
+                continue
+
             prev_fittest_loc = particle.personal_fittest_loc
             prev_fittest_loc_informants = particle.informat_fittest_loc
             for i in range(len(search_dimension)):

@@ -130,7 +130,32 @@ class PSO:
     def _move_particles(self):
         #TODO change each particle position based on its velocity value
         #TODO handle out of bounds based on policies (see BoundaryPolicy enum at top of page)
-        raise NotImplementedError()
+        for particle in self.particles:
+            if not any(particle.velocity != 0):
+                continue
+
+            temp_position = particle.position + epsilon*particle.velocity
+
+            # if position not within boundaries use appropriate boundary policy
+            # else update particle position at dimension d
+            # TODO: refuse only the dimension it is out of bounds with or refuse all dimensions?
+            for index, d in enumerate(self.search_dimension):
+                if not (d[0] <= temp_position[index] <= d[1]):
+
+                    if BoundaryPolicy.value == 'BOUNCE':
+
+                    elif BoundaryPolicy.value == 'RANDOMREINIT':
+                        particle.position = self._init_position()
+                        # TODO Maybe reinitialise velocity too (from slides)
+                        # particle.velocity = self._init_velocity()
+
+                    # else - REFUSE, do nothing
+                    else:
+                    
+                else:
+                    particle.position[index] = temp_position[index]
+
+            raise NotImplementedError()
 
     def _instantiate_particles(self):
         #depends on set_search_dimensions

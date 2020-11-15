@@ -39,6 +39,7 @@ class PSO:
         self.best = None
         self.previous_best = None
         self.particles = None
+        self.num_informants = 6
 
         self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
 
@@ -177,6 +178,14 @@ class PSO:
         #! returns a new value (see _instantiate_particles)
         # quick naive velocity solution, needs testing
         return [random.uniform(d[0], d[1]) for d in self.search_dimension]
+
+
+    def _init_informants(self):
+        # choose how many n informants each particle will have (variable self.num_informants)
+        # assign randomly n informants to each particle
+        for particle in self.particles:
+            no_self = np.array(self.particles).remove(particle)
+            particle.informants = np.random.choice(no_self, self.num_informants, replace=False)
 
 
 class Particle:

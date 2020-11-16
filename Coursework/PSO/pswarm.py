@@ -143,7 +143,10 @@ class PSO:
             for index, d in enumerate(self.search_dimension):
                 if not (d[0] <= temp_position[index] <= d[1]):
 
+                    # TODO Bounce might be totally wrong, requires code review
                     if BoundaryPolicy.value == 'BOUNCE':
+                        distance_left = temp_position[index] - self.boundary[index]
+                        particle.position[index] = self.boundary[index] - distance_left
 
                     elif BoundaryPolicy.value == 'RANDOMREINIT':
                         particle.position = self._init_position()

@@ -126,8 +126,6 @@ class ANN:
     """Artificial Neural Network class Implementation
     """
     def __init__(self):
-        """Construct a new sequential Artificial Neural Network
-        """
         self.layers = []
         self.input=None
         self.y=None
@@ -137,6 +135,7 @@ class ANN:
         self.loss_fn = 'MSE'
         self.loss = None
         self.decode_key = None
+        self.verbose_output = False
 
     def add(self, layer):
         """Add a new layer to the Neural Network
@@ -191,11 +190,17 @@ class ANN:
         if not self.compiled:
             raise Exception("The neural network must be compiled before performing training or inference.")
         # Input layer special case
-        pbar = tqdm(range(1, len(self.layers)), desc='Running model...', position=0, leave=True)
+        if self.verbose_output:
+            pbar = tqdm(range(1, len(self.layers)), desc='Running model...', position=0, leave=True)
         self.layers[0].output = calculate_one_layer(self.input, self.layers[0])
         # Hidden layers -> output layer
-        for i in pbar:
-            self.layers[i].output = calculate_one_layer(self.layers[i-1].output, self.layers[i])
+        if self.verbose_output:
+            for i in pbar:
+                self.layers[i].output = calculate_one_layer(self.layers[i-1].output, self.layers[i])
+        else:
+            for i in range(1, len(self.layers)):
+                self.layers[i].output = calculate_one_layer(self.layers[i-1].output, self.layers[i])
+
         self.y_hat = self.layers[-1].output
         self.loss = apply_loss(self.y, self.y_hat, loss_func=self.loss_fn)
 

@@ -39,11 +39,20 @@ class PSO:
         self.search_dimension = None
         self.search_dimension_set = False
         self.best = None
-        self.previous_best = None
+        self.previous_best = FitnessLoc([], -999999.0)
         self.particles = None
         self.num_informants = 6
 
         self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
+
+
+    def set_fitness_fn(self, fitness_function):
+        """Specify the function to use to calculate the fitness score
+
+        :param fitness_function: a function object that can assess the fitness based on a vector
+        :type fitness_function: numpy.array -> bool
+        """
+        self.fitness_fn = fitness_function
 
 
 
@@ -77,7 +86,7 @@ class PSO:
         self._instantiate_particles()
         self.best = None
 
-        controller = TerminationPolicyManager(TerminationPolicy.ITERATIONS, max_iter=1000)
+        controller = TerminationPolicyManager(TerminationPolicy.ITERATIONS, max_iter=self.max_iter)
 
         while not controller.terminate:
             # Update best and personal fitness values based on the current positions
@@ -89,8 +98,9 @@ class PSO:
 
             # Move the particles based on their velocity
             self._move_particles()
+            fitness_delta = (self.best.fitness-self.previous_best.fitness)
 
-            controller.next_iteration(fitness_delta=self.best-self.previous_best)
+            controller.next_iteration(fitness_delta=fitness_delta)
 
 
 
@@ -108,7 +118,9 @@ class PSO:
 
             if self.best is None or particle.fitness_loc > self.best:
                 self.previous_best = self.best
-                self.best = FitnessLoc(particle.position, particle.fitness_loc)
+                self.best = particle.fitness_loc
+                if self.previous_best is None:
+                    self.previous_best = self.best
 
 
     def _update_particle(self):
@@ -119,6 +131,13 @@ class PSO:
 
             if not any(particle.velocity != 0):
                 continue
+            
+            fittest_informant_loc = FitnessLoc([], -999999.0)
+            for informant in particle.informants:
+                if fittest_informant_loc < informant.fitness_loc:
+                    fittest_informant_loc = informant.fitness_loc
+
+            particle.informat_fittest_loc = fittest_informant_loc
 
             prev_fittest_loc = particle.personal_fittest_loc
             prev_fittest_loc_informants = particle.informat_fittest_loc
@@ -163,6 +182,7 @@ class PSO:
     def _instantiate_particles(self):
         #depends on set_search_dimensions
         self.particles = [Particle(self._init_position(), self._init_velocity()) for i in range(self.swarm_size)]
+        self._init_informants()
 
 
 
@@ -187,7 +207,8 @@ class PSO:
         # choose how many n informants each particle will have (variable self.num_informants)
         # assign randomly n informants to each particle
         for particle in self.particles:
-            no_self = np.array(self.particles).remove(particle)
+            no_self = np.delete(np.array(self.particles),
+                                np.where(np.array(self.particles) == particle ))
             particle.informants = np.random.choice(no_self, self.num_informants, replace=False)
 
 
@@ -222,6 +243,6 @@ class Particle:
             self.personal_fittest_loc = self.fitness_loc
 
         if self.fitness_loc > self.personal_fittest_loc:
-            self.personal_fittest_loc = FitnessLoc(self.position, self.fitness_loc)
+            self.personal_fittest_loc = self.fitness_loc
 
 

@@ -80,14 +80,27 @@ class TerminationPolicyManager:
         self.max_iter = max_iter
 
         # The fitness from the last iteration
-        self.min_fitness_delta = min_fitness_delta
-        self.current_fitness_delta = None
+        self.min_fitness_delta = min_fitness_delta # 0.1
+        self.current_fitness_delta = None # 0.15
+        self.start_fitness_delta = None # 0.2
         self.got_fitness_delta = False
 
         self.start_time = datetime.now()
         self.time_delta = time_delta
 
+        self.verbose = True
+
     #TODO implement logic for a loading bar during optimisation
+    def distance_to_termination(self):
+        closest_estimate = 0
+        iter_estimate = self.current_iter / self.max_iter 
+        if self.current_fitness_delta is not None:
+            total_distance = self.start_fitness_delta - self.min_fitness_delta
+            current_distance = self.start_fitness_delta - self.current_fitness_delta
+            current_distance / total_distance
+
+
+        pass
 
     def next_iteration(self, fitness_delta=None):
         """Step the termination policy manager forward

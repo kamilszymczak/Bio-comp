@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from .psobehaviour import FitnessLoc, TerminationPolicyManager, TerminationPolicy
+from .psobehaviour import FitnessLoc, TerminationPolicyManager, TerminationPolicy, BoundaryPolicy
 
 class PSO:
     """Particle Swarm Optimiser
@@ -23,7 +23,7 @@ class PSO:
         :param max_iter: The maximum number of iterations before termination, defaults to 0.1
         :type max_iter: int, optional
         """
-    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1, max_iter=int(1e6)):
+    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1, max_iter=int(1e6), boundary_policy=BoundaryPolicy.RANDOMREINIT):
         self.swarm_size = swarm_size
         self.boundary = bound
         self.alpha = alpha
@@ -32,6 +32,8 @@ class PSO:
         self.delta = delta
         self.epsilon = epsilon
         self.max_iter = max_iter
+
+        self.boundary_policy = boundary_policy
 
 
         self.search_dimension = None
@@ -45,7 +47,7 @@ class PSO:
 
 
 
-    def set_search_dimentions(self, dimensions):
+    def set_search_dimensions(self, dimensions):
         """Specify the dimensionality of the search
 
         :param dimensions: define dimensionality. Either with an int (using default boundaries), or a list/np.array of tuples descriping the boundaries for each dimension
@@ -99,14 +101,14 @@ class PSO:
         # update best
         for particle in self.particles:
             
-            if not any(particle.velocity != 0):
+            if all(particle.velocity == 0):
                 continue
 
             particle.assess_fitness(self.fitness_fn)
 
-            if self.best is None or particle.fitness > self.best:
+            if self.best is None or particle.fitness_loc > self.best:
                 self.previous_best = self.best
-                self.best = FitnessLoc(particle.position, particle.fitness)
+                self.best = FitnessLoc(particle.position, particle.fitness_loc)
 
 
     def _update_particle(self):
@@ -135,7 +137,7 @@ class PSO:
             if not any(particle.velocity != 0):
                 continue
 
-            temp_position = particle.position + epsilon*particle.velocity
+            temp_position = particle.position + self.epsilon*particle.velocity
 
             # if position not within boundaries use appropriate boundary policy
             # else update particle position at dimension d
@@ -144,26 +146,24 @@ class PSO:
                 if not (d[0] <= temp_position[index] <= d[1]):
 
                     # TODO Bounce might be totally wrong, requires code review
-                    if BoundaryPolicy.value == 'BOUNCE':
+                    if self.boundary_policy == BoundaryPolicy.BOUNCE:
                         distance_left = temp_position[index] - self.boundary[index]
                         particle.position[index] = self.boundary[index] - distance_left
 
-                    elif BoundaryPolicy.value == 'RANDOMREINIT':
-                        particle.position = self._init_position()
-                        # TODO Maybe reinitialise velocity too (from slides)
-                        # particle.velocity = self._init_velocity()
+                    elif self.boundary_policy == BoundaryPolicy.RANDOMREINIT:
+                        particle.position[index] = random.uniform(d[0], d[1])
 
                     # else - REFUSE, do nothing
-                    else:
-                    
+                    elif self.boundary_policy == BoundaryPolicy.REFUSE:
+                        pass
                 else:
                     particle.position[index] = temp_position[index]
 
-            raise NotImplementedError()
 
     def _instantiate_particles(self):
         #depends on set_search_dimensions
         self.particles = [Particle(self._init_position(), self._init_velocity()) for i in range(self.swarm_size)]
+
 
 
     def _init_position(self):
@@ -171,7 +171,7 @@ class PSO:
         # randomly initialise the position vector pointwise WITHIN the boundary of search_dimension list
         # look at Particle class: Particle.position = new value
         #! returns a new value (see _instantiate_particles)
-        return [random.uniform(d[0], d[1]) for d in self.search_dimension]
+        return np.array([random.uniform(d[0], d[1]) for d in self.search_dimension])
 
 
     def _init_velocity(self):
@@ -180,7 +180,7 @@ class PSO:
         # look at Particle class: Particle.velocity = new value
         #! returns a new value (see _instantiate_particles)
         # quick naive velocity solution, needs testing
-        return [random.uniform(d[0], d[1]) for d in self.search_dimension]
+        return np.array([random.uniform(d[0], d[1]) for d in self.search_dimension])
 
 
     def _init_informants(self):
@@ -202,7 +202,7 @@ class Particle:
     def __init__(self, position, velocity = None):
         self.position = position
         self.velocity = velocity
-        self.fitness = None
+        self.fitness_loc = None
 
         self.personal_fittest_loc = None
         self.informat_fittest_loc = None
@@ -216,9 +216,12 @@ class Particle:
         :type fitness_fn: np.array -> float
         """
         # position describes the neural networks parameters
-        self.fitness = FitnessLoc(self.position, fitness_fn(self.position))
+        self.fitness_loc = FitnessLoc(self.position, fitness_fn(self.position))
 
-        if self.fitness > self.personal_fittest_loc:
-            self.personal_fittest_loc = FitnessLoc(self.position, self.fitness)
+        if self.personal_fittest_loc is None:
+            self.personal_fittest_loc = self.fitness_loc
+
+        if self.fitness_loc > self.personal_fittest_loc:
+            self.personal_fittest_loc = FitnessLoc(self.position, self.fitness_loc)
 
 

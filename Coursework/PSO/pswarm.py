@@ -108,11 +108,12 @@ class PSO:
             self._move_particles()
 
             fitness_delta = (self.best.fitness - self.previous_best.fitness)
-            controller.next_iteration(fitness_delta=fitness_delta)
+
             if self.verbose:
                 pbar.update(controller.estimate_progress()*100)
                 #print('Iteration: ', controller.current_iter)
                 #print('Fitness: ', self.best.fitness)
+            controller.next_iteration(fitness_delta=fitness_delta)
 
         if self.verbose:
             pbar.close()

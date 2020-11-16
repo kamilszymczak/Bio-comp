@@ -116,6 +116,7 @@ class TerminationPolicyManager:
         if estimates == []:
             return 0
         estimate = max(estimates) - self.last_estimate
+        self.last_estimate = max(estimates)
         return estimate
 
     def next_iteration(self, fitness_delta=None):

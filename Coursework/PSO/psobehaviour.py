@@ -57,6 +57,7 @@ class TerminationPolicyManager:
     def __init__(self, termination_policy, max_iter=None, min_fitness_delta=None, time_delta=None):
         if type(termination_policy) is not list:
             self.termination_policy = [termination_policy]
+            #print(self.termination_policy)
         else:
             self.termination_policy = termination_policy
 
@@ -80,27 +81,42 @@ class TerminationPolicyManager:
         self.max_iter = max_iter
 
         # The fitness from the last iteration
-        self.min_fitness_delta = min_fitness_delta # 0.1
-        self.current_fitness_delta = None # 0.15
-        self.start_fitness_delta = None # 0.2
+        self.min_fitness_delta = min_fitness_delta 
+        self.current_fitness_delta = None 
+        self.start_fitness_delta = None 
         self.got_fitness_delta = False
 
         self.start_time = datetime.now()
         self.time_delta = time_delta
+        if TerminationPolicy.DURATION in self.termination_policy:
+            self.end_time = self.start_time + self.time_delta
 
-        self.verbose = True
+        self.last_estimate = 0
 
     #TODO implement logic for a loading bar during optimisation
-    def distance_to_termination(self):
-        closest_estimate = 0
-        iter_estimate = self.current_iter / self.max_iter 
-        if self.current_fitness_delta is not None:
-            total_distance = self.start_fitness_delta - self.min_fitness_delta
-            current_distance = self.start_fitness_delta - self.current_fitness_delta
-            current_distance / total_distance
+    def estimate_progress(self):
+        estimates = []
+        #print('TERMINATION POL: ', self.termination_policy)
+        if TerminationPolicy.ITERATIONS in self.termination_policy:
+            #print('works!')
+            iter_estimate = self.current_iter / self.max_iter
+            estimates.append(iter_estimate)
 
+        if TerminationPolicy.DURATION in self.termination_policy:
+            total_duration = self.start_time - self.end_time
+            current_rem_duration = self.start_time - datetime.now()
+            estimates.append(current_rem_duration/total_duration)
 
-        pass
+        if TerminationPolicy.CONVERGENCE in self.termination_policy:
+            if self.current_fitness_delta is not None:
+                total_distance = self.start_fitness_delta - self.min_fitness_delta
+                current_distance = self.start_fitness_delta - self.current_fitness_delta
+                estimates.append(current_distance / total_distance)
+
+        if estimates == []:
+            return 0
+        estimate = max(estimates) - self.last_estimate
+        return estimate
 
     def next_iteration(self, fitness_delta=None):
         """Step the termination policy manager forward

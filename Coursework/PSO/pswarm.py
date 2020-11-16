@@ -1,8 +1,10 @@
+from datetime import timedelta
 import numpy as np
 import random
-
+from tqdm.autonotebook import tqdm
 from .psobehaviour import FitnessLoc, TerminationPolicyManager, TerminationPolicy, BoundaryPolicy
 
+all_term_policy = [TerminationPolicy.ITERATIONS, TerminationPolicy.CONVERGENCE, TerminationPolicy.DURATION]
 class PSO:
     """Particle Swarm Optimiser
 
@@ -23,7 +25,8 @@ class PSO:
         :param max_iter: The maximum number of iterations before termination, defaults to 0.1
         :type max_iter: int, optional
         """
-    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1, max_iter=int(1e6), boundary_policy=BoundaryPolicy.RANDOMREINIT):
+
+    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=all_term_policy, termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}):
         self.swarm_size = swarm_size
         self.boundary = bound
         self.alpha = alpha
@@ -31,10 +34,10 @@ class PSO:
         self.gamma = gamma
         self.delta = delta
         self.epsilon = epsilon
-        self.max_iter = max_iter
 
         self.boundary_policy = boundary_policy
-
+        self.termination_policy = termination_policy
+        self.termination_args = termination_args
 
         self.search_dimension = None
         self.search_dimension_set = False
@@ -44,6 +47,8 @@ class PSO:
         self.num_informants = 6
 
         self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
+
+        self.verbose = True
 
 
     def set_fitness_fn(self, fitness_function):
@@ -86,7 +91,10 @@ class PSO:
         self._instantiate_particles()
         self.best = None
 
-        controller = TerminationPolicyManager(TerminationPolicy.ITERATIONS, max_iter=self.max_iter)
+        controller = TerminationPolicyManager(TerminationPolicy.ITERATIONS, **self.termination_args)
+
+        if self.verbose:
+            pbar = tqdm(total=100, position=0, leave=True)
 
         while not controller.terminate:
             # Update best and personal fitness values based on the current positions
@@ -98,9 +106,16 @@ class PSO:
 
             # Move the particles based on their velocity
             self._move_particles()
-            fitness_delta = (self.best.fitness-self.previous_best.fitness)
 
+            fitness_delta = (self.best.fitness - self.previous_best.fitness)
             controller.next_iteration(fitness_delta=fitness_delta)
+            if self.verbose:
+                pbar.update(controller.estimate_progress()*100)
+                #print('Iteration: ', controller.current_iter)
+                #print('Fitness: ', self.best.fitness)
+
+        if self.verbose:
+            pbar.close()
 
 
 

@@ -26,7 +26,7 @@ class PSO:
         :type max_iter: int, optional
         """
 
-    def __init__(self, swarm_size=10, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=all_term_policy, termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}):
+    def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=all_term_policy, termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}):
         self.swarm_size = swarm_size
         self.boundary = bound
         self.alpha = alpha
@@ -44,11 +44,11 @@ class PSO:
         self.best = None
         self.previous_best = FitnessLoc([], -999999.0)
         self.particles = None
-        self.num_informants = 6
+        self.num_informants = num_informants
 
         self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
 
-        self.verbose = True
+        self.verbose = False
 
 
     def set_fitness_fn(self, fitness_function):
@@ -58,6 +58,7 @@ class PSO:
         :type fitness_function: numpy.array -> bool
         """
         self.fitness_fn = fitness_function
+        print(fitness_function)
 
 
 
@@ -99,7 +100,7 @@ class PSO:
         while not controller.terminate:
             # Update best and personal fitness values based on the current positions
             # only iterate through particles that will move, thus continue if all velocities of a given particle are 0
-            self._assess_fitness()
+            self.pso_assess_fitness()
 
             # Update the informant fitness and velocity of all particles
             self._update_particle()
@@ -111,32 +112,34 @@ class PSO:
 
             if self.verbose:
                 pbar.update(controller.estimate_progress()*100)
-                #print('Iteration: ', controller.current_iter)
-                #print('Fitness: ', self.best.fitness)
+
+            
             controller.next_iteration(fitness_delta=fitness_delta)
 
         if self.verbose:
             pbar.close()
 
+        print('Iteration: ', controller.current_iter)
+        print('Fitness: ', self.best.fitness)
 
 
-
-    def _assess_fitness(self):
+    def pso_assess_fitness(self):
         # evaluate and update fitness for each particle at current location 
         # Particle class: self.fitness should be updated here
         # update best
+
         for particle in self.particles:
             
-            if all(particle.velocity == 0):
-                continue
+            #if all(particle.velocity == 0):
+            #    continue
+            #if not any(particle.velocity != 0):
+            #    continue
 
-            particle.assess_fitness(self.fitness_fn)
+            particle.assess_fitness()
 
             if self.best is None or particle.fitness_loc > self.best:
                 self.previous_best = self.best
                 self.best = particle.fitness_loc
-                if self.previous_best is None:
-                    self.previous_best = self.best
 
 
     def _update_particle(self):
@@ -145,8 +148,8 @@ class PSO:
         # Its ok if the particles velocity would take it out of bounds, handle that in _move_particles()
         for particle in self.particles:
 
-            if not any(particle.velocity != 0):
-                continue
+            #if not any(particle.velocity != 0):
+            #    continue
             
             fittest_informant_loc = FitnessLoc([], -999999.0)
             for informant in particle.informants:
@@ -169,8 +172,8 @@ class PSO:
         #TODO change each particle position based on its velocity value
         #TODO handle out of bounds based on policies (see BoundaryPolicy enum at top of page)
         for particle in self.particles:
-            if not any(particle.velocity != 0):
-                continue
+            #if not any(particle.velocity != 0):
+            #    continue
 
             temp_position = particle.position + self.epsilon*particle.velocity
 
@@ -197,7 +200,10 @@ class PSO:
 
     def _instantiate_particles(self):
         #depends on set_search_dimensions
-        self.particles = [Particle(self._init_position(), self._init_velocity()) for i in range(self.swarm_size)]
+        if self.fitness_fn is None:
+            raise ValueError('No fitness function defined')
+
+        self.particles = [Particle(self._init_position(), self._init_velocity(), self.fitness_fn) for _ in range(self.swarm_size)]
         self._init_informants()
 
 
@@ -236,24 +242,25 @@ class Particle:
         :param velocity: The initial velocity of the particle, defaults to None
         :type velocity: numpy.array, optional
     """
-    def __init__(self, position, velocity = None):
+    def __init__(self, position, velocity = None, fitness_fn=None):
         self.position = position
         self.velocity = velocity
         self.fitness_loc = None
+        self.fitness_fn = fitness_fn
 
         self.personal_fittest_loc = None
         self.informat_fittest_loc = None
-        #TODO assign informants
         self.informants = None
 
-    def assess_fitness(self, fitness_fn):
+    def assess_fitness(self):
         """Assess the fitness of this particle
 
         :param fitness_fn: the function to call to produce a fitness value from the model, this function should take a vector describing all the model parameters as an arg
         :type fitness_fn: np.array -> float
         """
         # position describes the neural networks parameters
-        self.fitness_loc = FitnessLoc(self.position, fitness_fn(self.position))
+        fitness = self.fitness_fn(self.position)
+        self.fitness_loc = FitnessLoc(self.position, fitness)
 
         if self.personal_fittest_loc is None:
             self.personal_fittest_loc = self.fitness_loc

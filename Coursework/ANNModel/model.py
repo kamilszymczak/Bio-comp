@@ -6,6 +6,8 @@ from tqdm.autonotebook import tqdm
 from . import activations as activ
 from . import loss
 
+import copy
+
 
 class ActivationFunction(IntEnum):
     NULL = 0
@@ -123,7 +125,15 @@ def enumerate_activation(activation_string):
     activation_string = activation_string.lower()
     return activation_enum.get(activation_string, ActivationFunction.NULL)
 
+class CopyANN:
+    def __init__(self, ANN):
+        self.original = ANN
+        self.ann_list = []
 
+    def test_fitness(self, vec):
+        new_ann = copy.deepcopy(self.original)
+        self.ann_list.append(new_ann)
+        return new_ann.assess_fitness(vec)
 class ANN:
     """Artificial Neural Network class Implementation
     """

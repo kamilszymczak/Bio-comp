@@ -38,8 +38,8 @@ activation_enum = {
 loss_picker = {
     'mse': loss.mean_squared_error,
     'meansquarederror': loss.mean_squared_error,
-    'hinge': hinge,
-    'exponentialloss': exponential_loss
+    'hinge': loss.hinge,
+    'exponentialloss': loss.exponential_loss
 }
 
 def weight_matrix(x, y):

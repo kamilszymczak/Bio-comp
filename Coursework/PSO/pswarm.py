@@ -1,6 +1,7 @@
 from datetime import timedelta
 import numpy as np
 import random
+import copy
 from tqdm.autonotebook import tqdm
 from .psobehaviour import FitnessLoc, TerminationPolicyManager, TerminationPolicy, BoundaryPolicy
 
@@ -48,7 +49,7 @@ class PSO:
 
         self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
 
-        self.verbose = False
+        self.verbose = True
 
 
     def set_fitness_fn(self, fitness_function):
@@ -82,7 +83,7 @@ class PSO:
             raise ValueError("Invalid dimensions parameter")
 
         self.search_dimension_set = True
-
+        
 
     def run(self):
         """Begin Particle Swarm Optimisation - Search dimensions must have been specified
@@ -90,7 +91,7 @@ class PSO:
         if not self.search_dimension_set:
             raise ValueError('Search dimentions have not yet been specified')
         self._instantiate_particles()
-        self.best = None
+        self.best = FitnessLoc([], -9999.0)
 
         controller = TerminationPolicyManager(TerminationPolicy.ITERATIONS, **self.termination_args)
 
@@ -121,7 +122,7 @@ class PSO:
 
         print('Iteration: ', controller.current_iter)
         print('Fitness: ', self.best.fitness)
-
+        return self.best
 
     def pso_assess_fitness(self):
         # evaluate and update fitness for each particle at current location 
@@ -130,14 +131,14 @@ class PSO:
 
         for particle in self.particles:
             
-            #if all(particle.velocity == 0):
+            #if not all(v != 0 for v in iter(particle.velocity)):
             #    continue
             #if not any(particle.velocity != 0):
             #    continue
 
             particle.assess_fitness()
 
-            if self.best is None or particle.fitness_loc > self.best:
+            if self.best is None or particle.fitness_loc.fitness > self.best.fitness:
                 self.previous_best = self.best
                 self.best = particle.fitness_loc
 
@@ -175,7 +176,7 @@ class PSO:
             #if not any(particle.velocity != 0):
             #    continue
 
-            temp_position = particle.position + self.epsilon*particle.velocity
+            temp_position = particle.position + (self.epsilon*particle.velocity)
 
             # if position not within boundaries use appropriate boundary policy
             # else update particle position at dimension d
@@ -185,6 +186,7 @@ class PSO:
 
                     # TODO Bounce might be totally wrong, requires code review
                     if self.boundary_policy == BoundaryPolicy.BOUNCE:
+                        #! Bug below, self.boundary[index wont work]
                         distance_left = temp_position[index] - self.boundary[index]
                         particle.position[index] = self.boundary[index] - distance_left
 
@@ -260,12 +262,12 @@ class Particle:
         """
         # position describes the neural networks parameters
         fitness = self.fitness_fn(self.position)
-        self.fitness_loc = FitnessLoc(self.position, fitness)
+        self.fitness_loc = FitnessLoc(copy.deepcopy(self.position), fitness)
 
         if self.personal_fittest_loc is None:
             self.personal_fittest_loc = self.fitness_loc
 
-        if self.fitness_loc > self.personal_fittest_loc:
+        if self.fitness_loc.fitness > self.personal_fittest_loc.fitness:
             self.personal_fittest_loc = self.fitness_loc
 
 

@@ -1,6 +1,7 @@
 import numpy as np
 import inspect
 import itertools
+import math
 from enum import IntEnum
 from tqdm.autonotebook import tqdm
 from . import activations as activ
@@ -125,15 +126,37 @@ def enumerate_activation(activation_string):
     activation_string = activation_string.lower()
     return activation_enum.get(activation_string, ActivationFunction.NULL)
 
-class CopyANN:
-    def __init__(self, ANN):
-        self.original = ANN
-        self.ann_list = []
+class ANNhistory:
+    """A class to store every vector produced when searching over the possible models
 
-    def test_fitness(self, vec):
-        new_ann = copy.deepcopy(self.original)
-        self.ann_list.append(new_ann)
-        return new_ann.assess_fitness(vec)
+        :param ANN: The model being optimised, must have an assess_fitness method returning a float fitness value
+        :type ANN: ANN
+        """
+    def __init__(self, ANN, num_particles=10, num_iterations=50):
+        self.model = ANN
+        self.vec_history = []
+        self.particle_fitness = {}
+        self.num_particles = num_particles
+        self.num_iterations = num_iterations
+
+    def calculate_particle_fitness(self):
+        for i in range(self.num_particles):
+            self.particle_fitness[i] = []
+            for j in range(math.floor(len(self.vec_history)/self.num_iterations)):
+                offset = self.num_iterations * i
+                self.particle_fitness[i].append(self.model.assess_fitness(None))
+
+    def assess_fitness(self, vec):
+        """Wrapper around the models assess fitness function to store all vectors passed into the history
+
+        :param vec: The vector to use to build the model
+        :type vec: numpy.array
+        :return: a fitness value for PSO
+        :rtype: float
+        """
+        self.vec_history.append(vec)
+        return self.model.assess_fitness(vec)
+
 class ANN:
     """Artificial Neural Network class Implementation
     """
@@ -268,9 +291,12 @@ class ANN:
         :return: a fitness score
         :rtype: float
         """
+        #new_model = copy.deepcopy(self)
+        #new_model.decode_vec(vec)
+        #new_model.one_pass()
         self.decode_vec(vec)
         self.one_pass()
-        return 1 / self.loss
+        return 1 / self.loss #new_model.loss
 
     
     def decode_vec(self, vec):
@@ -289,6 +315,7 @@ class ANN:
             layer_vec_size += input_dimension * columns
             self.layers[i].from_vec(sub_vec[:layer_vec_size])
             sub_vec = sub_vec[layer_vec_size:]
+
 
 
     def __generate_weights__(self):

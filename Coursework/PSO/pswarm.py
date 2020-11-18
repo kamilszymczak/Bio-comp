@@ -138,9 +138,9 @@ class PSO:
 
             particle.assess_fitness()
 
-            if self.best is None or particle.fitness_loc.fitness > self.best.fitness:
-                self.previous_best = self.best
-                self.best = particle.fitness_loc
+            if self.best is None or particle.fitness_loc > self.best:
+                self.previous_best = copy.deepcopy(self.best)
+                self.best = copy.deepcopy(particle.fitness_loc)
 
 
     def _update_particle(self):
@@ -151,7 +151,7 @@ class PSO:
 
             #if not any(particle.velocity != 0):
             #    continue
-            
+            particle.velocity_list.append(particle.velocity)
             fittest_informant_loc = FitnessLoc([], -999999.0)
             for informant in particle.informants:
                 if fittest_informant_loc < informant.fitness_loc:
@@ -253,6 +253,7 @@ class Particle:
         self.personal_fittest_loc = None
         self.informat_fittest_loc = None
         self.informants = None
+        self.velocity_list = []
 
     def assess_fitness(self):
         """Assess the fitness of this particle

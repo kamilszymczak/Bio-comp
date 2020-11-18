@@ -136,15 +136,24 @@ class ANNhistory:
         self.model = ANN
         self.vec_history = []
         self.particle_fitness = {}
+        self.particle_location = {}
         self.num_particles = num_particles
         self.num_iterations = num_iterations
 
-    def calculate_particle_fitness(self):
+
+    def historical_particle_fitness(self):
         for i in range(self.num_particles):
+            offset_vec = self.vec_history[i:]
+            location_vec = offset_vec[::10]
             self.particle_fitness[i] = []
-            for j in range(math.floor(len(self.vec_history)/self.num_iterations)):
-                offset = self.num_iterations * i
-                self.particle_fitness[i].append(self.model.assess_fitness(None))
+            for vec in location_vec:
+                self.particle_fitness[i].append(self.model.assess_fitness(vec))
+
+    def historical_particle_location(self):
+        for i in range(self.num_particles):
+            offset_vec = self.vec_history[i:]
+            self.particle_location[i] = offset_vec[::10]
+
 
     def assess_fitness(self, vec):
         """Wrapper around the models assess fitness function to store all vectors passed into the history

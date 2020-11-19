@@ -16,8 +16,8 @@ class ActivationFunction(IntEnum):
     HYPERBOLIC_TANGENT = 2
     COSINE = 3
     GAUSSIAN = 4
-    #RELU = 5
-    #SOFTMAX = 6
+    RELU = 5
+    SOFTMAX = 6
 
 activation_picker = {
     ActivationFunction.NULL: activ.null,
@@ -25,8 +25,8 @@ activation_picker = {
     ActivationFunction.HYPERBOLIC_TANGENT: activ.hyperbolic_tangent,
     ActivationFunction.COSINE: activ.cosine,
     ActivationFunction.GAUSSIAN: activ.gaussian,
-    #ActivationFunction.RELU: activ.relu,
-    #ActivationFunction.SOFTMAX: activ.softmax,
+    ActivationFunction.RELU: activ.relu,
+    ActivationFunction.SOFTMAX: activ.softmax,
 }
 
 activation_enum = {
@@ -36,8 +36,8 @@ activation_enum = {
     "tan": ActivationFunction.HYPERBOLIC_TANGENT,
     "cosine": ActivationFunction.COSINE,
     "gaussian": ActivationFunction.GAUSSIAN,
-    #"relu": ActivationFunction.RELU,
-    #"softmax": ActivationFunction.SOFTMAX
+    "relu": ActivationFunction.RELU,
+    "softmax": ActivationFunction.SOFTMAX
 }
 
 loss_picker = {
@@ -79,9 +79,10 @@ def calculate_one_layer(input_matrix, layer):
     if layer.use_bias:
         out = out + layer.bias
 
-    
-    out = apply_activation(out, layer.activation)
     #print(out)
+    #return out
+    out = apply_activation(out, layer.activation)
+    
     return out
 
 def apply_activation(weighted_sum, activation_func):
@@ -253,7 +254,7 @@ class ANN:
             for i in range(1, len(self.layers)):
                 self.layers[i].set_output(calculate_one_layer(self.layers[i-1].output, self.layers[i]))
 
-        self.y_hat = self.layers[-1].output
+        self.y_hat = self.layers[-1].output.flatten()
         self.loss = apply_loss(self.y, self.y_hat, loss_func=self.loss_fn)
 
 
@@ -292,7 +293,7 @@ class ANN:
         """
         dimension_vec = []
         for layer in self.layers:
-            layer_vec = [[(0.0, 4.0)]]
+            layer_vec = [[(0.0, 0.4)]]
             if layer.use_bias:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
             layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons * layer.input_dimension)])
@@ -313,7 +314,7 @@ class ANN:
         #new_model.one_pass()
         self.decode_vec(vec)
         self.one_pass()
-        return 1 / self.loss #new_model.loss
+        return self.loss #new_model.loss
 
     
     def decode_vec(self, vec):

@@ -60,4 +60,6 @@ def relu(z):
     """
     return np.where(z > 0, z, 0)
 
-    
+def softmax(z):
+    e_x = np.exp(z - np.max(z))
+    return e_x / e_x.sum()   

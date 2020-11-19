@@ -25,7 +25,8 @@ activation_picker = {
     ActivationFunction.HYPERBOLIC_TANGENT: activ.hyperbolic_tangent,
     ActivationFunction.COSINE: activ.cosine,
     ActivationFunction.GAUSSIAN: activ.gaussian,
-    ActivationFunction.RELU: activ.relu
+    ActivationFunction.RELU: activ.relu,
+    ActivationFunction.SOFTMAX: activ.softmax,
 }
 
 activation_enum = {
@@ -35,7 +36,8 @@ activation_enum = {
     "tan": ActivationFunction.HYPERBOLIC_TANGENT,
     "cosine": ActivationFunction.COSINE,
     "gaussian": ActivationFunction.GAUSSIAN,
-    "relu": ActivationFunction.RELU
+    "relu": ActivationFunction.RELU,
+    "softmax": ActivationFunction.SOFTMAX
 }
 
 loss_picker = {

@@ -148,10 +148,10 @@ class PSO:
         #! Doesnt move yet (this is important because the position of each particle affect how they all get a new velocity)
         # Its ok if the particles velocity would take it out of bounds, handle that in _move_particles()
         for particle in self.particles:
-
+            velocity = copy.deepcopy(particle.velocity)
             #if not any(particle.velocity != 0):
             #    continue
-            particle.velocity_list.append(particle.velocity)
+            particle.velocity_list.append(velocity)
             fittest_informant_loc = FitnessLoc([], -999999.0)
             for informant in particle.informants:
                 if fittest_informant_loc < informant.fitness_loc:
@@ -166,8 +166,8 @@ class PSO:
                 c = random.uniform(0.0, self.gamma)
                 d = random.uniform(0.0, self.delta)
                 #TODO once informants implemented c*(...) part might need to be corrected
-                particle.velocity[i] = self.alpha * particle.velocity[i] + b*(prev_fittest_loc.location[i] - particle.position[i]) + c*(prev_fittest_loc_informants.location[i] - particle.position[i]) + d*(self.best.location[i] - particle.position[i])
-
+                velocity[i] = self.alpha * velocity[i] + b*(prev_fittest_loc.location[i] - particle.position[i]) + c*(prev_fittest_loc_informants.location[i] - particle.position[i]) + d*(self.best.location[i] - particle.position[i])
+            particle.update_velocity(velocity)
 
     def _move_particles(self):
         #TODO change each particle position based on its velocity value
@@ -176,7 +176,7 @@ class PSO:
             #if not any(particle.velocity != 0):
             #    continue
 
-            temp_position = particle.position + (self.epsilon*particle.velocity)
+            temp_position = copy.deepcopy(particle.position) + (self.epsilon*copy.deepcopy(particle.velocity))
 
             # if position not within boundaries use appropriate boundary policy
             # else update particle position at dimension d
@@ -188,16 +188,16 @@ class PSO:
                     if self.boundary_policy == BoundaryPolicy.BOUNCE:
                         #! Bug below, self.boundary[index wont work]
                         distance_left = temp_position[index] - self.boundary[index]
-                        particle.position[index] = self.boundary[index] - distance_left
+                        temp_position[index] = self.boundary[index] - \
+                            distance_left
 
                     elif self.boundary_policy == BoundaryPolicy.RANDOMREINIT:
-                        particle.position[index] = random.uniform(d[0], d[1])
+                        temp_position[index] = random.uniform(d[0], d[1])
 
                     # else - REFUSE, do nothing
                     elif self.boundary_policy == BoundaryPolicy.REFUSE:
-                        pass
-                else:
-                    particle.position[index] = temp_position[index]
+                        temp_position[index] = particle.position[index]
+            particle.update_position(temp_position)
 
 
     def _instantiate_particles(self):
@@ -254,6 +254,12 @@ class Particle:
         self.informat_fittest_loc = None
         self.informants = None
         self.velocity_list = []
+
+    def update_position(self, new_position):
+        self.position = new_position
+
+    def update_velocity(self, new_velocity):
+        self.velocity = new_velocity
 
     def assess_fitness(self):
         """Assess the fitness of this particle

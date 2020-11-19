@@ -59,7 +59,7 @@ class PSO:
         :type fitness_function: numpy.array -> bool
         """
         self.fitness_fn = fitness_function
-        print(fitness_function)
+        #print(fitness_function)
 
 
 
@@ -159,10 +159,8 @@ class PSO:
                 if fittest_informant_loc < informant.fitness_loc:
                     fittest_informant_loc = informant.fitness_loc
 
-            particle.informat_fittest_loc = fittest_informant_loc
-
             prev_fittest_loc = particle.personal_fittest_loc
-            prev_fittest_loc_informants = particle.informat_fittest_loc
+            prev_fittest_loc_informants = fittest_informant_loc
             for i in range(len(self.search_dimension)):
                 b = random.uniform(0.0, self.beta)
                 c = random.uniform(0.0, self.gamma)

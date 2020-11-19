@@ -238,14 +238,14 @@ class ANN:
         # Input layer special case
         if self.verbose_output:
             pbar = tqdm(range(1, len(self.layers)), desc='Running model...', position=0, leave=True)
-        self.layers[0].output = calculate_one_layer(self.input, self.layers[0])
+        self.layers[0].set_output(calculate_one_layer(self.input, self.layers[0]))
         # Hidden layers -> output layer
         if self.verbose_output:
             for i in pbar:
-                self.layers[i].output = calculate_one_layer(self.layers[i-1].output, self.layers[i])
+                self.layers[i].set_output(calculate_one_layer(self.layers[i-1].output, self.layers[i]))
         else:
             for i in range(1, len(self.layers)):
-                self.layers[i].output = calculate_one_layer(self.layers[i-1].output, self.layers[i])
+                self.layers[i].set_output(calculate_one_layer(self.layers[i-1].output, self.layers[i]))
 
         self.y_hat = self.layers[-1].output
         self.loss = apply_loss(self.y, self.y_hat, loss_func=self.loss_fn)
@@ -336,15 +336,15 @@ class ANN:
         #TODO raise exception if no input
         
         # special case for weights & bias from input layer
-        self.layers[0].input_dimension = self.input.shape[1]
-        self.layers[0].bias = 2*np.random.rand(self.layers[0].neurons)-1
-        self.layers[0].weights = weight_matrix(self.layers[0].input_dimension, self.layers[0].neurons)
+        self.layers[0].set_input_dimension(self.input.shape[1])
+        self.layers[0].set_bias(2*np.random.rand(self.layers[0].neurons)-1)
+        self.layers[0].set_weights(weight_matrix(self.layers[0].input_dimension, self.layers[0].neurons))
         
         # Construct weight matrices & bias of each layer
         for i in range(1, len(self.layers)):
-            self.layers[i].input_dimension = self.layers[i-1].neurons
-            self.layers[i].bias = 2*np.random.rand(self.layers[i].neurons)-1
-            self.layers[i].weights = weight_matrix(self.layers[i].input_dimension, self.layers[i].neurons)
+            self.layers[i].set_input_dimension(self.layers[i-1].neurons)
+            self.layers[i].set_bias(2*np.random.rand(self.layers[i].neurons)-1)
+            self.layers[i].set_weights(weight_matrix(self.layers[i].input_dimension, self.layers[i].neurons))
         
 
 class Layer:
@@ -368,6 +368,18 @@ class Layer:
         self.weights = None
         self.bias = None
         self.output = None
+
+    def set_output(self, output):
+        self.output = output
+
+    def set_input_dimension(self, input_dim):
+        self.input_dimension = input_dim
+
+    def set_bias(self, bias):
+        self.bias = bias
+    
+    def set_weights(self, weights):
+        self.weights = weights
     
     def to_vec(self):
         """Convert the layer into a vector

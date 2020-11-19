@@ -96,7 +96,7 @@ class PSO:
         controller = TerminationPolicyManager(TerminationPolicy.ITERATIONS, **self.termination_args)
 
         if self.verbose:
-            pbar = tqdm(total=100, position=0, leave=True)
+            pbar = tqdm(total=100, position=0, leave=True, desc='Fitness: {}'.format(self.best.fitness))
 
         while not controller.terminate:
             # Update best and personal fitness values based on the current positions
@@ -113,6 +113,8 @@ class PSO:
 
             if self.verbose:
                 pbar.update(controller.estimate_progress()*100)
+                pbar.set_description(
+                    desc='Fitness: {}'.format(self.best.fitness), refresh=True)
 
             
             controller.next_iteration(fitness_delta=fitness_delta)
@@ -120,8 +122,8 @@ class PSO:
         if self.verbose:
             pbar.close()
 
-        print('Iteration: ', controller.current_iter)
-        print('Fitness: ', self.best.fitness)
+        #print('Iteration: ', controller.current_iter)
+        #print('Fitness: ', self.best.fitness)
         return self.best
 
     def pso_assess_fitness(self):
@@ -176,7 +178,7 @@ class PSO:
             #if not any(particle.velocity != 0):
             #    continue
 
-            temp_position = copy.deepcopy(particle.position) + (self.epsilon*copy.deepcopy(particle.velocity))
+            temp_position = particle.position + (self.epsilon*particle.velocity)
 
             # if position not within boundaries use appropriate boundary policy
             # else update particle position at dimension d
@@ -233,7 +235,7 @@ class PSO:
         for particle in self.particles:
             no_self = np.delete(np.array(self.particles),
                                 np.where(np.array(self.particles) == particle ))
-            particle.informants = np.random.choice(no_self, self.num_informants, replace=False)
+            particle.set_informants(np.random.choice(no_self, self.num_informants, replace=False))
 
 
 class Particle:
@@ -260,6 +262,9 @@ class Particle:
 
     def update_velocity(self, new_velocity):
         self.velocity = new_velocity
+
+    def set_informants(self, informants):
+        self.informants = informants
 
     def assess_fitness(self):
         """Assess the fitness of this particle

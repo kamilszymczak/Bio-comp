@@ -16,8 +16,8 @@ class ActivationFunction(IntEnum):
     HYPERBOLIC_TANGENT = 2
     COSINE = 3
     GAUSSIAN = 4
-    RELU = 5
-    SOFTMAX = 6
+    #RELU = 5
+    #SOFTMAX = 6
 
 activation_picker = {
     ActivationFunction.NULL: activ.null,
@@ -25,8 +25,8 @@ activation_picker = {
     ActivationFunction.HYPERBOLIC_TANGENT: activ.hyperbolic_tangent,
     ActivationFunction.COSINE: activ.cosine,
     ActivationFunction.GAUSSIAN: activ.gaussian,
-    ActivationFunction.RELU: activ.relu,
-    ActivationFunction.SOFTMAX: activ.softmax,
+    #ActivationFunction.RELU: activ.relu,
+    #ActivationFunction.SOFTMAX: activ.softmax,
 }
 
 activation_enum = {
@@ -36,8 +36,8 @@ activation_enum = {
     "tan": ActivationFunction.HYPERBOLIC_TANGENT,
     "cosine": ActivationFunction.COSINE,
     "gaussian": ActivationFunction.GAUSSIAN,
-    "relu": ActivationFunction.RELU,
-    "softmax": ActivationFunction.SOFTMAX
+    #"relu": ActivationFunction.RELU,
+    #"softmax": ActivationFunction.SOFTMAX
 }
 
 loss_picker = {
@@ -77,7 +77,11 @@ def calculate_one_layer(input_matrix, layer):
     out = np.dot(input_matrix, layer.weights)
     if layer.use_bias:
         out = out + layer.bias
-    return apply_activation(out, layer.activation)
+
+    
+    out = apply_activation(out, layer.activation)
+    #print(out)
+    return out
 
 def apply_activation(weighted_sum, activation_func):
     """Apply activation function to matrix
@@ -90,7 +94,9 @@ def apply_activation(weighted_sum, activation_func):
     af = pick_activation(activation_func)
     if af == None:
         raise Exception("Invalid activation function")
-    return af(weighted_sum)
+    out = af(weighted_sum)
+    #print('ACTIVATION FUNC: ', out)
+    return out
 
 def apply_loss(y, y_hat, loss_func='MSE'):
     """Apply the loss function
@@ -180,7 +186,6 @@ class ANN:
         self.y_hat = None
         self.loss_fn = 'MSE'
         self.loss = None
-        self.decode_key = None
         self.verbose_output = False
 
     def add(self, layer):
@@ -286,7 +291,7 @@ class ANN:
         """
         dimension_vec = []
         for layer in self.layers:
-            layer_vec = [[(0.0, 5.0)]]
+            layer_vec = [[(0.0, 4.0)]]
             if layer.use_bias:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
             layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons * layer.input_dimension)])

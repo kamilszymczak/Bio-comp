@@ -58,6 +58,7 @@ def relu(z):
     :return: The matrix with relu applied to each element
     :rtype: numpy.ndarray
     """
+    #print('relu: ',z)
     return np.where(z > 0, z, 0)
 
 def softmax(z):

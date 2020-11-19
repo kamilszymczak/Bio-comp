@@ -138,11 +138,11 @@ class PSO:
             #if not any(particle.velocity != 0):
             #    continue
 
-            particle.assess_fitness()
+            fitness = particle.assess_fitness()
 
-            if self.best is None or particle.fitness_loc > self.best:
+            if self.best is None or fitness > self.best:
                 self.previous_best = copy.deepcopy(self.best)
-                self.best = copy.deepcopy(particle.fitness_loc)
+                self.best = copy.deepcopy(fitness)
 
 
     def _update_particle(self):
@@ -271,13 +271,13 @@ class Particle:
         :type fitness_fn: np.array -> float
         """
         # position describes the neural networks parameters
-        fitness = self.fitness_fn(self.position)
-        self.fitness_loc = FitnessLoc(copy.deepcopy(self.position), fitness)
+        self.fitness_loc = FitnessLoc(copy.deepcopy(
+            self.position), self.fitness_fn(self.position))
 
         if self.personal_fittest_loc is None:
             self.personal_fittest_loc = self.fitness_loc
 
-        if self.fitness_loc.fitness > self.personal_fittest_loc.fitness:
+        if self.fitness_loc > self.personal_fittest_loc:
             self.personal_fittest_loc = self.fitness_loc
 
-
+        return self.fitness_loc

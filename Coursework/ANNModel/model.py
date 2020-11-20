@@ -5,7 +5,7 @@ from enum import IntEnum
 from tqdm.autonotebook import tqdm
 from . import activations as activ
 from . import loss
-from ..PSO.interface import Optimisable
+from Coursework.PSO.interface import Optimisable
 
 import copy
 import matplotlib.pyplot as plt

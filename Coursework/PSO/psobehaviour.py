@@ -79,7 +79,7 @@ class TerminationPolicyManager:
         self.terminate = False
 
         # Number of iterations so far
-        self.current_iter = 0
+        self.current_iter = 1
         self.max_iter = max_iter
 
         # The fitness from the last iteration
@@ -130,7 +130,7 @@ class TerminationPolicyManager:
         :raises StopIteration: When the termination condition has been satisfied
         """
         if TerminationPolicy.ITERATIONS in self.termination_policy:
-            if self.max_iter < self.current_iter:
+            if self.max_iter <= self.current_iter:
                 self.terminate = True
 
         if TerminationPolicy.DURATION in self.termination_policy:

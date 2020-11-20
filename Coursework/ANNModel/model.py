@@ -8,6 +8,7 @@ from . import activations as activ
 from . import loss
 
 import copy
+import matplotlib.pyplot as plt
 
 
 class ActivationFunction(IntEnum):
@@ -183,6 +184,18 @@ class ANNhistory:
         """
         self.vec_history.append(vec)
         return self.model.assess_fitness(vec)
+
+
+    def plot_loss(self, particles=(0, 10)):
+        iterations = range(len(self.particle_fitness[particles[0]]))
+        for p in range(particles[0], particles[1]):
+            plt.plot(iterations, self.particle_fitness[p], label= "particle " + str(p))
+
+        plt.title('Particles fitness change over iterations')
+        plt.xlabel('Iteration')
+        plt.ylabel('Fitness')
+        plt.legend()
+        plt.show()
 
 class ANN:
     """Artificial Neural Network class Implementation

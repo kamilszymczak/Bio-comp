@@ -66,10 +66,12 @@ class TerminationPolicyManager:
                 raise ValueError('Max iteration undefined')
 
         if TerminationPolicy.DURATION in self.termination_policy:
+            raise NotImplementedError
             if time_delta is None:
                 raise ValueError('Time delta undefined')
 
         if TerminationPolicy.CONVERGENCE in self.termination_policy:
+            raise NotImplementedError
             if min_fitness_delta is None:
                 raise ValueError('Fitness delta undefined')
 

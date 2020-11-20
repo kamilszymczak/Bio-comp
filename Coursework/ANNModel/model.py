@@ -154,7 +154,7 @@ class ANNhistory:
     def historical_particle_fitness(self):
         for i in range(self.num_particles):
             offset_vec = self.vec_history[i:]
-            location_vec = offset_vec[::10]
+            location_vec = offset_vec[::self.num_particles]
             self.particle_fitness[i] = []
             for vec in location_vec:
                 self.particle_fitness[i].append(self.model.assess_fitness(vec))
@@ -162,7 +162,7 @@ class ANNhistory:
     def historical_particle_location(self):
         for i in range(self.num_particles):
             offset_vec = self.vec_history[i:]
-            self.particle_location[i] = offset_vec[::10]
+            self.particle_location[i] = offset_vec[::self.num_particles]
 
 
     def assess_fitness(self, vec):

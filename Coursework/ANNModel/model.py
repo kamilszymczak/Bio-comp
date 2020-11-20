@@ -164,6 +164,14 @@ class ANNhistory:
             offset_vec = self.vec_history[i:]
             self.particle_location[i] = offset_vec[::self.num_particles]
 
+    def best_iter_per_particle(self):
+        max_indices = []
+        for i in range(len(self.particle_fitness)):
+            max_indices.append(np.argmax(self.particle_fitness[i]))
+            #print('Particle ', i, ': ', max(self.particle_fitness[i]))
+        self.best_indices = max_indices
+        return max_indices
+
 
     def assess_fitness(self, vec):
         """Wrapper around the models assess fitness function to store all vectors passed into the history
@@ -254,7 +262,7 @@ class ANN:
             for i in range(1, len(self.layers)):
                 self.layers[i].set_output(calculate_one_layer(self.layers[i-1].output, self.layers[i]))
 
-        self.y_hat = self.layers[-1].output.flatten()
+        self.y_hat = np.mean(self.layers[-1].output, axis=1)#.flatten()
         self.loss = apply_loss(self.y, self.y_hat, loss_func=self.loss_fn)
 
 
@@ -293,7 +301,7 @@ class ANN:
         """
         dimension_vec = []
         for layer in self.layers:
-            layer_vec = [[(0.0, 0.4)]]
+            layer_vec = [[(0.0, 5.0)]]
             if layer.use_bias:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
             layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons * layer.input_dimension)])
@@ -314,7 +322,7 @@ class ANN:
         #new_model.one_pass()
         self.decode_vec(vec)
         self.one_pass()
-        return self.loss #new_model.loss
+        return 1/ self.loss + 0.0001 #new_model.loss
 
     
     def decode_vec(self, vec):

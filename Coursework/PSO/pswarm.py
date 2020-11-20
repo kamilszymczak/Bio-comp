@@ -1,13 +1,13 @@
 from datetime import timedelta
 import numpy as np
-import math
 import random
 import copy
 from tqdm.autonotebook import tqdm
+from .interface import Optimisable
 from .psobehaviour import FitnessLoc, TerminationPolicyManager, TerminationPolicy, BoundaryPolicy
 
 all_term_policy = [TerminationPolicy.ITERATIONS, TerminationPolicy.CONVERGENCE, TerminationPolicy.DURATION]
-class PSO:
+class PSO(Optimisable):
     """Particle Swarm Optimiser
 
         :param swarm_size: desired swarm size, defaults to 10
@@ -247,7 +247,8 @@ class PSO:
 
 
     #! ------------------------------- Perform PSO on PSO --------------------------------------------
-    def meta_pso(self, vec):
+
+    def evaluate_fitness(self, vec):
         """Evaluate fitness of PSO
 
         :param vec: A vector describing the hyperparameters of PSO

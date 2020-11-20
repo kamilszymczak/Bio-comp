@@ -1,11 +1,11 @@
 import numpy as np
 import inspect
 import itertools
-import math
 from enum import IntEnum
 from tqdm.autonotebook import tqdm
 from . import activations as activ
 from . import loss
+from ..PSO.interface import Optimisable
 
 import copy
 import matplotlib.pyplot as plt
@@ -197,7 +197,8 @@ class ANNhistory:
         plt.legend()
         plt.show()
 
-class ANN:
+
+class ANN(Optimisable):
     """Artificial Neural Network class Implementation
     """
     def __init__(self):
@@ -321,8 +322,7 @@ class ANN:
             dimension_vec += layer_vec
         return list(itertools.chain(*dimension_vec))
 
-
-    def assess_fitness(self, vec):
+    def evaluate_fitness(self, vec):
         """Assess the fitness of this model given some parameters
 
         :param vec: An array representing all the activations, biases, and weights

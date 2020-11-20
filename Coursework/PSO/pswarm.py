@@ -1,5 +1,6 @@
 from datetime import timedelta
 import numpy as np
+import math
 import random
 import copy
 from tqdm.autonotebook import tqdm
@@ -11,6 +12,8 @@ class PSO:
 
         :param swarm_size: desired swarm size, defaults to 10
         :type swarm_size: int, optional
+        :param num_informants: [description], defaults to 6
+        :type num_informants: int, optional
         :param bound: limits of dimensionality, defaults to (1, -1)
         :type bound: tuple, optional
         :param alpha: proportion of velocity to be retained, defaults to 0.1
@@ -23,11 +26,18 @@ class PSO:
         :type delta: float, optional
         :param epsilon: jump size of a particle, defaults to 0.1
         :type epsilon: float, optional
-        :param max_iter: The maximum number of iterations before termination, defaults to 0.1
-        :type max_iter: int, optional
+        :param boundary_policy: One of the boundary policy enum from psobehaviour module, defaults to BoundaryPolicy.RANDOMREINIT
+        :type boundary_policy: BoundaryPolicy, optional
+        :param termination_policy: TerminationPolicy, defaults to [TerminationPolicy.ITERATIONS]
+        :type termination_policy: list, optional
+        :param termination_args: A dict of args passed the a controller managing the finishing state of PSO, defaults to {'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}
+        :type termination_args: dict, optional
+        :param verbose: Print output, defaults to False
+        :type verbose: bool, optional
         """
 
-    def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=all_term_policy, termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}):
+    def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=[TerminationPolicy.ITERATIONS], termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}, verbose=False):
+        #! Currently BoundaryPolicy.BOUNCE, TerminationPolicy.DURATION and TerminationPolicy.CONVERGENCE are not implemented
         self.swarm_size = swarm_size
         self.boundary = bound
         self.alpha = alpha
@@ -49,7 +59,7 @@ class PSO:
 
         self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
 
-        self.verbose = True
+        self.verbose = verbose
 
 
     def set_fitness_fn(self, fitness_function):
@@ -165,12 +175,11 @@ class PSO:
                 b = random.uniform(0.0, self.beta)
                 c = random.uniform(0.0, self.gamma)
                 d = random.uniform(0.0, self.delta)
-                #TODO once informants implemented c*(...) part might need to be corrected
                 velocity[i] = self.alpha * velocity[i] + b*(prev_fittest_loc.location[i] - particle.position[i]) + c*(prev_fittest_loc_informants.location[i] - particle.position[i]) + d*(self.best.location[i] - particle.position[i])
             particle.update_velocity(velocity)
 
     def _move_particles(self):
-        #TODO change each particle position based on its velocity value
+
         #TODO handle out of bounds based on policies (see BoundaryPolicy enum at top of page)
         for particle in self.particles:
             #if not any(particle.velocity != 0):
@@ -183,9 +192,9 @@ class PSO:
             # TODO: refuse only the dimension it is out of bounds with or refuse all dimensions?
             for index, d in enumerate(self.search_dimension):
                 if not (d[0] <= temp_position[index] <= d[1]):
-
                     # TODO Bounce might be totally wrong, requires code review
                     if self.boundary_policy == BoundaryPolicy.BOUNCE:
+                        raise NotImplementedError
                         #! Bug below, self.boundary[index wont work]
                         distance_left = temp_position[index] - self.boundary[index]
                         temp_position[index] = self.boundary[index] - \
@@ -236,6 +245,50 @@ class PSO:
             particle.set_informants(np.random.choice(no_self, self.num_informants, replace=False))
 
 
+
+    #! ------------------------------- Perform PSO on PSO --------------------------------------------
+    def meta_pso(self, vec):
+        """Evaluate fitness of PSO
+
+        :param vec: A vector describing the hyperparameters of PSO
+        :type vec: list(float)
+        :return: A value representing the best fitness found by the parameters
+        :rtype: float
+        """
+        self.decode_vec(vec)
+        self.run()
+        return self.best.fitness
+
+    def decode_vec(self, vec):
+        """Decode a vector to set the 
+
+        :param vec: A vector describing the hyperparameters of PSO
+        :type vec: list(float)
+        """
+        self.swarm_size = round(vec[0])
+        self.num_informants = round(vec[1])
+        self.alpha = vec[2]
+        self.beta = vec[3]
+        self.gamma = vec[4]
+        self.delta = vec[5]
+        self.epsilon = vec[6]
+
+    def dimension_vec(self):
+        """Produce a list describing the search dimensions of PSO
+
+        :return: a list to pass into PSO to set the search dimensions
+        :rtype: list(tuple(float))
+        """
+        swarm_size = (10, 100)
+        informants = (4, 8)
+        alpha = (0.01, 2.0)
+        beta = (0.01, 2.0)
+        gamma = (0.01, 2.0)
+        delta = (0.01, 2.0)
+        epsilon = (0.01, 2.0)
+        return [swarm_size, informants, alpha, beta, gamma, delta, epsilon]
+
+    #! --------------------------------------------------------------------------------------
 class Particle:
     """A particle within a PSO optimiser
 

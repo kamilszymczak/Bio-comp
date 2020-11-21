@@ -1,8 +1,11 @@
 # Loss functions here
 import numpy as np
+import warnings
 
 def mean_squared_error(y, yhat):
-    return np.mean((y - yhat)**2)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return np.mean((y - yhat)**2)
 
 # https://towardsdatascience.com/what-is-loss-function-1e2605aeb904
 def hinge(y, yhat):

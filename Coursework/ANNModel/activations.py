@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 # TODO: IMPLEMENT FUNCTION
 def null(z):
@@ -47,7 +48,9 @@ def gaussian(z):
     :return: The matrix with gaussian applied to each element
     :rtype: numpy.ndarray
     """
-    return np.exp((-z)**2)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return np.exp((-z)**2)
 
 
 def relu(z):

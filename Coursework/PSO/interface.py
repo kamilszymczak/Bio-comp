@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class Optimisable(ABC):
+    """Implementing these methods will allow a class to be optimised by PSO
+    """
     @abstractmethod
     def evaluate_fitness(self, vec):
         """Evaluate the fitness of self given the parameters as a vector

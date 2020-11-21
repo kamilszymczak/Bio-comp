@@ -119,7 +119,7 @@ class TerminationPolicyManager:
             return 0
         estimate = max(estimates) - self.last_estimate
         self.last_estimate = max(estimates)
-        return round(estimate)
+        return round(estimate, 2)
 
     def next_iteration(self, fitness_delta=None):
         """Step the termination policy manager forward

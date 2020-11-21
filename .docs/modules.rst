@@ -1,8 +1,7 @@
-Coursework
-==========
+Bio-comp
+========
 
 .. toctree::
    :maxdepth: 4
 
-   ANNModel
-   PSO
+   Coursework

@@ -2,10 +2,42 @@ from .interface import Optimisable
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+class PSOFittest(Optimisable):
+    def __init__(self, model):
+        """A wrapper class to store only the fittest location and fitness
+
+        :param model: The model being optimised
+        :type model: [type]
+        """
+        self.model = model
+        self.fitness = 0
+        self.vec = None
+
+    def evaluate_fitness(self, vec):
+        """Wrapper around the models assess fitness function to store all vectors passed into the history
+
+        :param vec: The vector to use to build the model
+        :type vec: numpy.array
+        :return: a fitness value for PSO
+        :rtype: float
+        """
+        fitness = self.model.evaluate_fitness(vec)
+        if fitness > self.fitness:
+            self.fitness = fitness
+            self.vec = vec
+        return fitness
+
+    def dimension_vec(self):
+        return self.model.dimension_vec()
+
+    def decode_vec(self, vec):
+        pass
+
 class PSOHistory(Optimisable):
     """A wrapper class around classes implementing the Optimisable interface to store and plot metrics for every vector produced when performing PSO
 
-    :param model: The model being optimised, must have an assess_fitness method returning a float fitness value
+    :param model: The model being optimised, must have implemented Optimisable
     :type model: model
     :param num_particles: The number of particles the model is using, defaults to 10
     :type num_particles: int, optional
@@ -20,6 +52,7 @@ class PSOHistory(Optimisable):
         self.particle_location = {}
         self.num_particles = num_particles
         self.num_iterations = num_iterations
+        
 
 
     def historical_particle_fitness(self):
@@ -30,7 +63,8 @@ class PSOHistory(Optimisable):
             location_vec = offset_vec[::self.num_particles]
             self.particle_fitness[i] = []
             for vec in location_vec:
-                self.particle_fitness[i].append(self.model.assess_fitness(vec))
+                self.particle_fitness[i].append(
+                    self.model.evaluate_fitness(vec))
         return self.particle_fitness
 
 

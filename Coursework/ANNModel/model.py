@@ -5,10 +5,8 @@ from enum import IntEnum
 from tqdm.autonotebook import tqdm
 from . import activations as activ
 from . import loss
-from Coursework.PSO.interface import Optimisable
+from ..PSO.interface import Optimisable
 
-import copy
-import matplotlib.pyplot as plt
 
 
 class ActivationFunction(IntEnum):
@@ -136,68 +134,6 @@ def enumerate_activation(activation_string):
     """
     activation_string = activation_string.lower()
     return activation_enum.get(activation_string, ActivationFunction.NULL)
-
-class ANNhistory:
-    """A class to store every vector produced when searching over the possible models
-
-        :param ANN: The model being optimised, must have an assess_fitness method returning a float fitness value
-        :type ANN: ANN
-        """
-    def __init__(self, ANN, num_particles=10, num_iterations=50):
-        self.model = ANN
-        self.vec_history = []
-        self.particle_fitness = {}
-        self.particle_location = {}
-        self.num_particles = num_particles
-        self.num_iterations = num_iterations
-
-
-    def historical_particle_fitness(self):
-        for i in range(self.num_particles):
-            offset_vec = self.vec_history[i:]
-            location_vec = offset_vec[::self.num_particles]
-            self.particle_fitness[i] = []
-            for vec in location_vec:
-                self.particle_fitness[i].append(self.model.assess_fitness(vec))
-
-    def historical_particle_location(self):
-        for i in range(self.num_particles):
-            offset_vec = self.vec_history[i:]
-            self.particle_location[i] = offset_vec[::self.num_particles]
-
-    def best_iter_per_particle(self):
-        max_indices = []
-        for i in range(len(self.particle_fitness)):
-            max_indices.append(np.argmax(self.particle_fitness[i]))
-            #print('Particle ', i, ': ', max(self.particle_fitness[i]))
-        self.best_indices = max_indices
-        return max_indices
-
-
-    def assess_fitness(self, vec):
-        """Wrapper around the models assess fitness function to store all vectors passed into the history
-
-        :param vec: The vector to use to build the model
-        :type vec: numpy.array
-        :return: a fitness value for PSO
-        :rtype: float
-        """
-        self.vec_history.append(vec)
-        return self.model.assess_fitness(vec)
-
-
-    def plot_loss(self, particles=(0, 10)):
-        iterations = range(len(self.particle_fitness[particles[0]]))
-        for p in range(particles[0], particles[1]):
-            plt.plot(iterations, self.particle_fitness[p], label= "particle " + str(p))
-
-        plt.title('Particles fitness change over iterations')
-        plt.xlabel('Iteration')
-        plt.ylabel('Fitness')
-        plt.legend()
-        plt.show()
-
-
 class ANN(Optimisable):
     """Artificial Neural Network class Implementation
     """

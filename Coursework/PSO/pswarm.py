@@ -274,6 +274,8 @@ class PSO(Optimisable):
         self.delta = vec[5]
         self.epsilon = vec[6]
 
+        return self
+
     def dimension_vec(self):
         """Produce a list describing the search dimensions of PSO
 

@@ -42,6 +42,15 @@ class PSOHistory(Optimisable):
             self.particle_location[i] = offset_vec[::self.num_particles]
         return self.particle_location
 
+    def best_particle(self):
+        """The most fit particle discovered
+
+        :return: index and value pair
+        :rtype: int, list(float)
+        """
+        index = np.argmax(self.vec_history)
+        return index , self.vec_history[index]
+
 
     def best_iter_per_particle(self):
         """The indices of the most fit vector that every particle discovers

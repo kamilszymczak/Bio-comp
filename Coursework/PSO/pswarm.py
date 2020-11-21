@@ -36,7 +36,7 @@ class PSO(Optimisable):
         :type verbose: bool, optional
         """
 
-    def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=[TerminationPolicy.ITERATIONS], termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}, verbose=False):
+    def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=[TerminationPolicy.ITERATIONS], termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}, verbose=False, num_runs=1):
         #! Currently BoundaryPolicy.BOUNCE, TerminationPolicy.DURATION and TerminationPolicy.CONVERGENCE are not implemented
         self.swarm_size = swarm_size
         self.boundary = bound
@@ -58,7 +58,7 @@ class PSO(Optimisable):
         self.num_informants = num_informants
 
         self.fitness_fn = None # The arg to this is the shape of the ANN (wieghts + activation)
-
+        self.num_runs = num_runs
         self.verbose = verbose
 
 
@@ -111,7 +111,7 @@ class PSO(Optimisable):
         while not controller.terminate:
             # Update best and personal fitness values based on the current positions
             # only iterate through particles that will move, thus continue if all velocities of a given particle are 0
-            self.pso_assess_fitness()
+            self._pso_assess_fitness()
 
             # Update the informant fitness and velocity of all particles
             self._update_particle()
@@ -257,8 +257,11 @@ class PSO(Optimisable):
         :rtype: float
         """
         self.decode_vec(vec)
-        self.run()
-        return self.best.fitness
+        fitness_list = []
+        for _ in range(self.num_runs):
+            self.run()
+            fitness_list.append(self.best.fitness)
+        return np.mean(fitness_list)
 
     def decode_vec(self, vec):
         """Decode a vector to set the hyperparameters of the next search

@@ -135,7 +135,7 @@ def enumerate_activation(activation_string):
     activation_string = activation_string.lower()
     return activation_enum.get(activation_string, ActivationFunction.NULL)
 class ANN(Optimisable):
-    """Artificial Neural Network class Implementation
+    """Fully connected Artificial Neural Network
     """
     def __init__(self):
         self.layers = []

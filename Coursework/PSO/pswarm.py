@@ -10,31 +10,31 @@ all_term_policy = [TerminationPolicy.ITERATIONS, TerminationPolicy.CONVERGENCE, 
 class PSO(Optimisable):
     """Particle Swarm Optimiser
 
-        :param swarm_size: desired swarm size, defaults to 10
-        :type swarm_size: int, optional
-        :param num_informants: [description], defaults to 6
-        :type num_informants: int, optional
-        :param bound: limits of dimensionality, defaults to (1, -1)
-        :type bound: tuple, optional
-        :param alpha: proportion of velocity to be retained, defaults to 0.1
-        :type alpha: float, optional
-        :param beta: proportion of personal best to be retained, defaults to 0.2
-        :type beta: float, optional
-        :param gamma: proportion of the informants’ best to be retained, defaults to 0.2
-        :type gamma: float, optional
-        :param delta: proportion of global best to be retained, defaults to 0.2
-        :type delta: float, optional
-        :param epsilon: jump size of a particle, defaults to 0.1
-        :type epsilon: float, optional
-        :param boundary_policy: One of the boundary policy enum from psobehaviour module, defaults to BoundaryPolicy.RANDOMREINIT
-        :type boundary_policy: BoundaryPolicy, optional
-        :param termination_policy: TerminationPolicy, defaults to [TerminationPolicy.ITERATIONS]
-        :type termination_policy: list, optional
-        :param termination_args: A dict of args passed the a controller managing the finishing state of PSO, defaults to {'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}
-        :type termination_args: dict, optional
-        :param verbose: Print output, defaults to False
-        :type verbose: bool, optional
-        """
+    :param swarm_size: desired swarm size, defaults to 10
+    :type swarm_size: int, optional
+    :param num_informants: [description], defaults to 6
+    :type num_informants: int, optional
+    :param bound: limits of dimensionality, defaults to (1, -1)
+    :type bound: tuple, optional
+    :param alpha: proportion of velocity to be retained, defaults to 0.1
+    :type alpha: float, optional
+    :param beta: proportion of personal best to be retained, defaults to 0.2
+    :type beta: float, optional
+    :param gamma: proportion of the informants’ best to be retained, defaults to 0.2
+    :type gamma: float, optional
+    :param delta: proportion of global best to be retained, defaults to 0.2
+    :type delta: float, optional
+    :param epsilon: jump size of a particle, defaults to 0.1
+    :type epsilon: float, optional
+    :param boundary_policy: One of the boundary policy enum from psobehaviour module, defaults to BoundaryPolicy.RANDOMREINIT
+    :type boundary_policy: BoundaryPolicy, optional
+    :param termination_policy: TerminationPolicy, defaults to [TerminationPolicy.ITERATIONS]
+    :type termination_policy: list, optional
+    :param termination_args: A dict of args passed the a controller managing the finishing state of PSO, defaults to {'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}
+    :type termination_args: dict, optional
+    :param verbose: Print output, defaults to False
+    :type verbose: bool, optional
+    """
 
     def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=[TerminationPolicy.ITERATIONS], termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}, verbose=False, num_runs=1):
         #! Currently BoundaryPolicy.BOUNCE, TerminationPolicy.DURATION and TerminationPolicy.CONVERGENCE are not implemented

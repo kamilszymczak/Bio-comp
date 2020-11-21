@@ -14,7 +14,9 @@ def sigmoid(z):
     :return: The matrix with sigmoid applied to each element
     :rtype: numpy.ndarray
     """
-    return 1.0/(1.0 + np.exp(-z))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        return 1.0/(1.0 + np.exp(-z))
 
 
 

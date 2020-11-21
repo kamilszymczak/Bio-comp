@@ -43,13 +43,15 @@ class Data:
         """
         return self.df.iloc[:,-1].to_numpy()
 
-    def score(self, model, data_name):
+    def score(self, model, data_name, atol=1e-8):
         """Accuracy Scores of model, model must have been run, score reflects the input data of the model
 
         :param model: ANN model 
         :type model: ANNModel.Model.ANN
         :param data_name: Name of dataset
         :type data_name: string
+        :param atol: absolute tolerence for numpy.isclose
+        :type atol: float
         :return: tuple of scores 
         :rtype: tuple(float)
         """
@@ -72,10 +74,10 @@ class Data:
         #loop through predictions
         for index, pred in enumerate(predictions):
 
-            if np.isclose(model.y[index], pred):
+            if np.isclose(model.y[index], pred, atol=atol):
                 correctly_classified_A += 1
 
-            if np.isclose(pred, model.y[index]):
+            if np.isclose(pred, model.y[index], atol=atol):
                 correctly_classified_B += 1
 
         return correctly_classified_A/len(model.y), correctly_classified_B/len(model.y)     

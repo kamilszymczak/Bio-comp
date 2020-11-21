@@ -35,3 +35,11 @@ Coursework.ANNModel.data module
    :members:
    :undoc-members:
    :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: Coursework.ANNModel
+   :members:
+   :undoc-members:
+   :show-inheritance:

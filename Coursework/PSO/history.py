@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 
 
 class PSOFittest(Optimisable):
-    def __init__(self, model):
-        """A wrapper class to store only the fittest location and fitness
+    """A wrapper class to store only the fittest location and fitness
 
         :param model: The model being optimised
-        :type model: [type]
+        :type model: PSO.interface.Optimisable
         """
+    def __init__(self, model):
+
         self.model = model
         self.fitness = 0
         self.vec = None
@@ -29,9 +30,15 @@ class PSOFittest(Optimisable):
         return fitness
 
     def dimension_vec(self):
+        """Return the encapsulated models dimension vector
+
+        :return: A vector describing the dimensions of the search space
+        :rtype: list(tuple(float))
+        """
         return self.model.dimension_vec()
 
     def decode_vec(self, vec):
+        # No implementation needed
         pass
 
 class PSOHistory(Optimisable):

@@ -136,7 +136,7 @@ class PSO(Optimisable):
         #print('Fitness: ', self.best.fitness)
         return self.best
 
-    def pso_assess_fitness(self):
+    def _pso_assess_fitness(self):
         # evaluate and update fitness for each particle at current location 
         # Particle class: self.fitness should be updated here
         # update best
@@ -261,7 +261,7 @@ class PSO(Optimisable):
         return self.best.fitness
 
     def decode_vec(self, vec):
-        """Decode a vector to set the 
+        """Decode a vector to set the hyperparameters of the next search
 
         :param vec: A vector describing the hyperparameters of PSO
         :type vec: list(float)

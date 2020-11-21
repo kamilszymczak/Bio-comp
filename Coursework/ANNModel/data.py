@@ -43,13 +43,11 @@ class Data:
         """
         return self.df.iloc[:,-1].to_numpy()
 
-    def score(self, model, test_labels, data_name):
-        """Accuracy Scores of model
+    def score(self, model, data_name):
+        """Accuracy Scores of model, model must have been run, score reflects the input data of the model
 
         :param model: ANN model 
         :type model: ANNModel.Model.ANN
-        :param test_labels: actual test data outcomes
-        :type test_labels: numpy.array
         :param data_name: Name of dataset
         :type data_name: string
         :return: tuple of scores 
@@ -74,10 +72,10 @@ class Data:
         #loop through predictions
         for index, pred in enumerate(predictions):
 
-            if np.isclose(test_labels[index], pred):
+            if np.isclose(model.y[index], pred):
                 correctly_classified_A += 1
 
-            if np.isclose(pred, test_labels[index]):
+            if np.isclose(pred, model.y[index]):
                 correctly_classified_B += 1
 
-        return correctly_classified_A/len(test_labels), correctly_classified_B/len(test_labels)     
+        return correctly_classified_A/len(model.y), correctly_classified_B/len(model.y)     

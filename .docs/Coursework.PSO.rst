@@ -34,11 +34,3 @@ Coursework.PSO.psobehaviour module
    :undoc-members:
    :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: Coursework.PSO
-   :members:
-   :undoc-members:
-   :show-inheritance:

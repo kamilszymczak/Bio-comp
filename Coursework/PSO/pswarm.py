@@ -312,12 +312,27 @@ class Particle:
         self.velocity_list = []
 
     def update_position(self, new_position):
+        """Updates particle's position
+
+        :param new_position: List of position for each dimension
+        :type new_position: numpy.array
+        """
         self.position = new_position
 
     def update_velocity(self, new_velocity):
+        """Updates particle's velocity
+
+        :param new_velocity: List of velocity for each dimension
+        :type new_velocity: numpy.array
+        """
         self.velocity = new_velocity
 
     def set_informants(self, informants):
+        """Sets particle's informants
+
+        :param informants: List of particles that will be particle's informants 
+        :type informants: numpy.array
+        """
         self.informants = informants
 
     def assess_fitness(self):

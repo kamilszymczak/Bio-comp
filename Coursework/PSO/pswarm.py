@@ -36,7 +36,7 @@ class PSO(Optimisable):
     :type verbose: bool, optional
     """
 
-    def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=[TerminationPolicy.ITERATIONS], termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}, verbose=False, num_runs=1):
+    def __init__(self, swarm_size=10, num_informants=6, bound=(1, -1), alpha=0.1, beta=1.3, gamma=1.4, delta=1.3, epsilon=0.1,  boundary_policy=BoundaryPolicy.RANDOMREINIT, termination_policy=[TerminationPolicy.ITERATIONS], termination_args={'max_iter': int(1e6), 'time_delta': timedelta(minutes=4), 'min_fitness_delta': 0}, verbose=True, num_runs=1):
         #! Currently BoundaryPolicy.BOUNCE, TerminationPolicy.DURATION and TerminationPolicy.CONVERGENCE are not implemented
         self.swarm_size = swarm_size
         self.boundary = bound
@@ -156,9 +156,9 @@ class PSO(Optimisable):
 
 
     def _update_particle(self):
-        #TODO set the informant fitness and new velocity of all particles
         #! Doesnt move yet (this is important because the position of each particle affect how they all get a new velocity)
         # Its ok if the particles velocity would take it out of bounds, handle that in _move_particles()
+        # It would be nice to optimise this
         for particle in self.particles:
             velocity = copy.deepcopy(particle.velocity)
             #if not any(particle.velocity != 0):
@@ -179,8 +179,6 @@ class PSO(Optimisable):
             particle.update_velocity(velocity)
 
     def _move_particles(self):
-
-        #TODO handle out of bounds based on policies (see BoundaryPolicy enum at top of page)
         for particle in self.particles:
             #if not any(particle.velocity != 0):
             #    continue
@@ -189,7 +187,6 @@ class PSO(Optimisable):
 
             # if position not within boundaries use appropriate boundary policy
             # else update particle position at dimension d
-            # TODO: refuse only the dimension it is out of bounds with or refuse all dimensions?
             for index, d in enumerate(self.search_dimension):
                 if not (d[0] <= temp_position[index] <= d[1]):
                     # TODO Bounce might be totally wrong, requires code review

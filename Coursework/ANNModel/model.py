@@ -251,7 +251,7 @@ class ANN(Optimisable):
         """
         dimension_vec = []
         for layer in self.layers:
-            layer_vec = [[(0.0, 5.0)]]
+            layer_vec = [[(-0.4, 6.4)]]
             if layer.use_bias:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
             layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons * layer.input_dimension)])

@@ -53,19 +53,17 @@
 \setcounter{page}{1}
 
 \section{Introduction}
-Our solution is written in Python, relying heavily on numpy, pandas and python standard libraries. We also made use of matplotlib for plotting graphs.
-We used an OOP approach to maintain high organisation and extensibility.
-We used jupyter notebooks to demonstrate how to use our codebase, and to present our findings. 
+This report details our reationale when devleoping our Artificial Neural Network (ANN) and Particle Swarm Optimisation (PSO) implementations, our observations upon completion of the implementation and the experiments we performed to gain insight into the factors that can effect PSO.
 
-We have decided to design and implement the ANN using an object orientated approach. We have a class that contains the whole ANN which contains a list of Layer objects, each Layer object holds neurons, activation function it is using, weights and optionally a bias.
-
-Similarly, we have used an OOP approach for PSO implementation where an PSO object holds all the information that includes hyperparameters and global data such as best fitness particle, as well as a list of particles that are objects themselves.
+Our solution is written in Python, heavily utilising numpy, pandas and the python standard libraries, additionally we made use of matplotlib for plotting graphs.
+We used an OOP approach to keep the project organised so we could maintain the fairly large codebase, this also neatly decoupled the ANN and the PSO modules.
+We used jupyter notebooks to demonstrate how to use our codebase, and to present our findings.
 
 \section{Development Rationale}
 Our rationale was to create 2 submodules: ANNModel and PSO that could be used to build a fully connected neural network or perform PSO independently.
 We wanted the submodules to be completely decoupled to allow PSO to work on arbitrary Optimisation problems.\\
 
-\noindent~ANNModel is only able to create a fully connected neural network...\\
+\noindent~ANNModel is only able to create a fully connected neural network, we made this descision to simplify the process of vectorizing the parameters of the network for optimisation with PSO, this also made converting the vector back into a model easier.
 
 \noindent~The ANNModel’s design was inspired by TensorFlow \& Keras\autocite{ModuleTfKeras,ModuleTfKeras,teamKerasDocumentationModel}, specifically when defining the shape of the neural network. For example you can instantiate the empty network, define the input and result vectors, the layers and then, finally, compile the model. 
 Once compiled you can perform a single pass on the model with either random weights or activations, biases and weights defined by a vector.\\
@@ -122,12 +120,21 @@ Our own findings support this.
     \multicolumn{1}{|c|}{}                         &                                                                                              & Test  & 20.96   & 0.049 & 17\%   \\ \bottomrule
     \multicolumn{1}{|c|}{\multirow{4}{*}{XOR}} & \multirow{2}{*}{Best ANN params}                                                             & Train & 9096925098444960 & 0     & 100\%  \\ \cmidrule(l){3-6} 
     \multicolumn{1}{|c|}{}                     &                                                                                              & Test  & 16.05            & 0     & 100\%  \\ \cmidrule(l){2-6} 
-    \multicolumn{1}{|c|}{}                     & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 479.64           & 0.098 & 86\%   \\ \cmidrule(l){3-6} 
-    \multicolumn{1}{|c|}{}                     &                                                                                              & Test  & 587.04           & 0.072 & 91\%   \\ \bottomrule
+    \multicolumn{1}{|c|}{}                     & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 299545           & 0.135 & 85\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                     &                                                                                              & Test  & 263010           & 0.109 & 91\%   \\ \bottomrule
     \end{tabular}
-    \end{table}
+    \label{tab:ExperimentResults}
+\end{table}
 
 \section{Discussion and Conclusion}
+
+\subsection{Discussion}
+\begin{itemize}
+    \item The best ANN hyperparameters we observed appeared to be a result of running at least 12.5 million different ANN hyperparameter configurations each time we ran meta-PSO in an attempt to optimise the inner-PSO hyperparameters for a given dataset.
+    \item This might suggest the highest performing ANN hyperparameters discovered during our search for good PSO hyperparameters  were more due to reinitialising PSO so many times than actually finding some really good PSO hyperparameters.
+    \item We frequently observed PSO getting stuck in local maximum, this can be seen by the fitness disparity between the 10 run mean scores in table~\ref{tab:ExperimentResults}~
+    \item Poor computational performance of our implementation (Memory access bottlenecks?)
+\end{itemize}
 
 \pagebreak
 \appendix

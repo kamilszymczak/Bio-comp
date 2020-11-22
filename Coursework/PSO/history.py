@@ -11,6 +11,7 @@ class PSOFittest(Optimisable):
         :type model: [type]
         """
         self.model = model
+        self.run_count = 0
         self.fitness = 0
         self.vec = None
 
@@ -22,6 +23,7 @@ class PSOFittest(Optimisable):
         :return: a fitness value for PSO
         :rtype: float
         """
+        self.run_count += 1
         fitness = self.model.evaluate_fitness(vec)
         if fitness > self.fitness:
             self.fitness = fitness
@@ -52,6 +54,7 @@ class PSOHistory(Optimisable):
         self.particle_location = {}
         self.num_particles = num_particles
         self.num_iterations = num_iterations
+        self.run_count = 0
         
 
 
@@ -108,6 +111,7 @@ class PSOHistory(Optimisable):
         :return: a fitness value for PSO
         :rtype: float
         """
+        self.run_count = 0
         self.vec_history.append(vec)
         return self.model.evaluate_fitness(vec)
 

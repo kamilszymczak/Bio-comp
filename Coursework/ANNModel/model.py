@@ -134,6 +134,8 @@ def enumerate_activation(activation_string):
     """
     activation_string = activation_string.lower()
     return activation_enum.get(activation_string, ActivationFunction.NULL)
+
+
 class ANN(Optimisable):
     """Fully connected Artificial Neural Network
     """
@@ -148,6 +150,7 @@ class ANN(Optimisable):
         self.loss = None
         self.verbose_output = False
 
+
     def add(self, layer):
         """Add a new layer to the Neural Network
 
@@ -158,6 +161,7 @@ class ANN(Optimisable):
             raise Exception("Parameter must be an instance of the Layer class.")
         self.layers = self.layers + [layer]
         self.compiled = False
+
 
     def set_training_input(self, input_matrix, result_vector):
         """Provide the input data to the ANN
@@ -181,6 +185,7 @@ class ANN(Optimisable):
             raise Exception("Weights might have been generated for a different shape input, please check the columns of your input")
         self.y = result_vector    
         
+
     def compile(self):
         """Compile the Neural Network so it is ready for training or inference
         """
@@ -227,6 +232,7 @@ class ANN(Optimisable):
         else: 
             raise ValueError('There is no loss function defined for this key')
 
+
     def vectorize(self):
         """Produce a 1D vector describing this neural network parameters
 
@@ -251,12 +257,13 @@ class ANN(Optimisable):
         """
         dimension_vec = []
         for layer in self.layers:
-            layer_vec = [[(-0.4, 6.4)]]
+            layer_vec = [[(-0.4, 5.4)]]
             if layer.use_bias:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
             layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons * layer.input_dimension)])
             dimension_vec += layer_vec
         return list(itertools.chain(*dimension_vec))
+
 
     def evaluate_fitness(self, vec):
         """Assess the fitness of this model given some parameters
@@ -290,7 +297,6 @@ class ANN(Optimisable):
             layer_vec_size += input_dimension * columns
             self.layers[i].from_vec(sub_vec[:layer_vec_size])
             sub_vec = sub_vec[layer_vec_size:]
-
 
 
     def __generate_weights__(self):
@@ -333,18 +339,23 @@ class Layer:
         self.bias = None
         self.output = None
 
+
     def set_output(self, output):
         self.output = output
+
 
     def set_input_dimension(self, input_dim):
         self.input_dimension = input_dim
 
+
     def set_bias(self, bias):
         self.bias = bias
     
+
     def set_weights(self, weights):
         self.weights = weights
     
+
     def to_vec(self):
         """Convert the layer into a vector
 
@@ -356,6 +367,7 @@ class Layer:
             return np.append(t, self.weights.flatten())
         else:
             return np.append(int(self.activation), self.weights.flatten())
+
 
     def from_vec(self, vec):
         """Convert a vector into a layer

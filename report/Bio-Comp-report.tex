@@ -1,0 +1,138 @@
+\documentclass[11pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\usepackage{setspace}
+
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{inputenc}
+
+\usepackage{dashrule}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{mwe}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+\usepackage[backend=biber,style=authoryear-icomp]{biblatex}
+\usepackage[toc]{appendix}
+\usepackage[acronym]{glossaries}
+
+\addbibresource{references.bib}
+
+\hypersetup{ linktoc=all}
+\graphicspath{ {./images/} }
+
+
+\begin{document}
+\title{%
+	\bf Biologically Inspired Computing\\ 
+    \large Coursework \\
+    Training an Artificial Neural Network\\
+     using Particle Swarm Optimisation}
+
+\author{
+	Sam Fay-Hunt | \texttt{sf52@hw.ac.uk}\\
+	Kamil Szymczak | \texttt{ks...@hw.ac.uk}
+}
+
+\maketitle
+\thispagestyle{empty}
+\pagebreak
+
+\tableofcontents
+\thispagestyle{empty}
+\pagebreak
+
+
+\setcounter{page}{1}
+
+\section{Introduction}
+Our solution is written in Python, relying heavily on numpy, pandas and python standard libraries. We also made use of matplotlib for plotting graphs.
+We used an OOP approach to maintain high organisation and extensibility.
+We used jupyter notebooks to demonstrate how to use our codebase, and to present our findings. 
+
+We have decided to design and implement the ANN using an object orientated approach. We have a class that contains the whole ANN which contains a list of Layer objects, each Layer object holds neurons, activation function it is using, weights and optionally a bias.
+
+Similarly, we have used an OOP approach for PSO implementation where an PSO object holds all the information that includes hyperparameters and global data such as best fitness particle, as well as a list of particles that are objects themselves.
+
+\section{Development Rationale}
+Our rationale was to create 2 submodules: ANNModel and PSO that could be used to build a fully connected neural network or perform PSO independently.
+We wanted the submodules to be completely decoupled to allow PSO to work on arbitrary Optimisation problems.\\
+
+\noindent~ANNModel is only able to create a fully connected neural network...\\
+
+\noindent~The ANNModel’s design was inspired by TensorFlow \& Keras\autocite{ModuleTfKeras,ModuleTfKeras,teamKerasDocumentationModel}, specifically when defining the shape of the neural network. For example you can instantiate the empty network, define the input and result vectors, the layers and then, finally, compile the model. 
+Once compiled you can perform a single pass on the model with either random weights or activations, biases and weights defined by a vector.\\
+
+\noindent~The PSO class utilises a Particle class to abstract away some complexity.
+To use the PSO class define the hyperparameters in the constructor (as described in the documentation), and then specify the fitness function and search dimensions for PSO. \\
+
+\noindent~We created an interface for PSO Called Optimisable, any class that properly implements this interface can be used with our PSO implementation. 
+The beauty of this technique is that it allowed us to implement this interface on our PSO class and construct a (PSO) optimiser for our PSO hyperparameters for a specific model shape, for clarity we refer to this outer PSO optimiser as “meta-PSO” and the inner PSO optimiser as “inner-PSO”.
+
+This interface also allowed us to create some wrapper classes(PSOHistory, PSOFittest) that can store detailed data about all the hyperparameter settings of the model being optimised.
+
+\section{Testing Methodology}
+
+As  explained in the previous section, we used a method to find the good PSO hyperparameters by applying PSO to another PSO that itself tries to optimize our ANN for a defined dataset.
+This allowed us to investigate a wide search space of potential optimal hyperparameters for the PSO that was used to optimize the given ANN.
+
+These are the hyperparameters that our meta PSO algorithm searches for \url{https://www2.macs.hw.ac.uk/~sf52/Bio-Comp-docs/html/_modules/Coursework/PSO/pswarm.html#PSO.dimension_vec}
+
+Flaws in testing:
+\begin{itemize}
+    \item We use a fixed model structure for our neural network during testing, cannot generalise to other models.
+    \item The fitness function we used was simply 1/loss, this was easy to implement but may have impacted the ability of PSO to escape local maximum. In future a linear fitness value may have been preferred.
+    \item During meta-PSO we only took the mean of 10 inner-PSO runs to evaluate the fitness of each inner-PSO hyperparameter configuration. More would have been better, but impractical in terms of time.
+\end{itemize}
+
+\section{Results}
+Findings in~\autocite{garcia-nietoWhySixInformants2012,garcia-nietoEmpiricalComputationQuasioptimal2011} indicate that 6 to 8 informants is generally a good number of informants that each particle should have. 
+Our own findings support this.
+
+\begin{table}[H]
+    \begin{tabular}{@{}|cl|l|lll|@{}}
+    \toprule
+    \multicolumn{1}{|l}{}                        & Experiment                                                                                   & Data  & Fitness & Loss  & Score* \\ \midrule
+    \multicolumn{1}{|c|}{\multirow{4}{*}{Cubic}} & \multirow{2}{*}{Best ANN params}                                                             & Train & 4437    & 0     & 97\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                       &                                                                                              & Test  & 6847    & 0     & 100\%  \\ \cmidrule(l){2-6} 
+    \multicolumn{1}{|c|}{}                       & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 47      & 0.028 & 12\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                       &                                                                                              & Test  & 61      & 0.022 & 9\%    \\ \bottomrule
+    \multicolumn{1}{|c|}{\multirow{4}{*}{Linear}} & \multirow{2}{*}{Best ANN params}                                                             & Train & 3.005e+17 & 0     & 100\%  \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                        &                                                                                              & Test  & 3.380e+17 & 0     & 100\%  \\ \cmidrule(l){2-6} 
+    \multicolumn{1}{|c|}{}                        & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 223       & 0.033 & 31\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                        &                                                                                              & Test  & 219       & 0.029 & 34\%   \\ \bottomrule
+    \multicolumn{1}{|c|}{\multirow{4}{*}{Tanh}} & \multirow{2}{*}{Best ANN params}                                                             & Train & 236154  & 0     & 100\%  \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                      &                                                                                              & Test  & 74997   & 0     & 100\%  \\ \cmidrule(l){2-6} 
+    \multicolumn{1}{|c|}{}                      & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 49      & 0.078 & 26\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                      &                                                                                              & Test  & 55      & 0.101 & 22\%   \\ \bottomrule
+    \multicolumn{1}{|c|}{\multirow{4}{*}{Sine}} & \multirow{2}{*}{Best ANN params}                                                             & Train & 487.8   & 0.002 & 31\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                      &                                                                                              & Test  & 459.3   & 0.002 & 39\%   \\ \cmidrule(l){2-6} 
+    \multicolumn{1}{|c|}{}                      & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 12.28   & 0.083 & 11\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                      &                                                                                              & Test  & 12.02   & 0.086 & 8\%    \\ \bottomrule
+    \multicolumn{1}{|c|}{\multirow{4}{*}{Complex}} & \multirow{2}{*}{Best ANN params}                                                             & Train & 20.17   & 0.05  & 9\%    \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                         &                                                                                              & Test  & 16.05   & 0.062 & 18\%   \\ \cmidrule(l){2-6} 
+    \multicolumn{1}{|c|}{}                         & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 7.83    & 0.129 & 12\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                         &                                                                                              & Test  & 20.96   & 0.049 & 17\%   \\ \bottomrule
+    \multicolumn{1}{|c|}{\multirow{4}{*}{XOR}} & \multirow{2}{*}{Best ANN params}                                                             & Train & 9096925098444960 & 0     & 100\%  \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                     &                                                                                              & Test  & 16.05            & 0     & 100\%  \\ \cmidrule(l){2-6} 
+    \multicolumn{1}{|c|}{}                     & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}10 run mean from \\ best PSO params\end{tabular}} & Train & 479.64           & 0.098 & 86\%   \\ \cmidrule(l){3-6} 
+    \multicolumn{1}{|c|}{}                     &                                                                                              & Test  & 587.04           & 0.072 & 91\%   \\ \bottomrule
+    \end{tabular}
+    \end{table}
+
+\section{Discussion and Conclusion}
+
+\pagebreak
+\appendix
+
+\section{References}
+\printbibliography
+
+\end{document}

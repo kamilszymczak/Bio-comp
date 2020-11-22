@@ -82,8 +82,8 @@ class PSOHistory(Optimisable):
         :return: index and value pair
         :rtype: int, list(float)
         """
-        index = np.argmax(self.vec_history)
-        return index , self.vec_history[index]
+        index = np.argmax(self.vec_fitness)
+        return index, self.vec_history[index]
 
 
     def best_iter_per_particle(self):
@@ -126,6 +126,11 @@ class PSOHistory(Optimisable):
         # No implementation necessary
         pass
 
+    def reshape_lists(self, num_runs=10):
+        for i in range(len(self.particle_fitness)):
+            self.particle_fitness[i] = np.mean(
+                np.array(self.particle_fitness[i]).reshape(num_runs, self.num_iterations), axis=0)
+
 
     def plot_fitness(self, particles=(0, 10)):
         """Plot the fitness of each particle
@@ -144,22 +149,6 @@ class PSOHistory(Optimisable):
         plt.legend()
         plt.show()
 
-    def plot_fitness(self, particles=(0, 10)):
-        """Plot the fitness of each particle
-
-        :param particles: The range of particles to plot, defaults to (0, 10)
-        :type particles: tuple, optional
-        """
-        iterations = range(len(self.particle_fitness[particles[0]]))
-        for p in range(particles[0], particles[1]):
-            plt.plot(
-                iterations, self.particle_fitness[p], label="particle " + str(p))
-
-        plt.title('Particles fitness change over iterations')
-        plt.xlabel('Iteration')
-        plt.ylabel('Fitness')
-        plt.legend()
-        plt.show()
 
     def plot_mean_fitness(self):
         """Plot the fitness of each particle

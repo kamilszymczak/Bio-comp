@@ -50,6 +50,7 @@ class PSOHistory(Optimisable):
     def __init__(self, model, num_particles=10, num_iterations=50):
         self.model = model
         self.vec_history = []
+        self.vec_fitness = []
         self.particle_fitness = {}
         self.particle_location = {}
         self.num_particles = num_particles
@@ -62,12 +63,8 @@ class PSOHistory(Optimisable):
         """Build a dictionary recoring the fitness values returned by PSO
         """
         for i in range(self.num_particles):
-            offset_vec = self.vec_history[i:]
-            location_vec = offset_vec[::self.num_particles]
-            self.particle_fitness[i] = []
-            for vec in location_vec:
-                self.particle_fitness[i].append(
-                    self.model.evaluate_fitness(vec))
+            offset_vec = self.vec_fitness[i:]
+            self.particle_fitness[i] = offset_vec[::self.num_particles]
         return self.particle_fitness
 
 
@@ -113,7 +110,9 @@ class PSOHistory(Optimisable):
         """
         self.run_count = 0
         self.vec_history.append(vec)
-        return self.model.evaluate_fitness(vec)
+        fitness = self.model.evaluate_fitness(vec)
+        self.vec_fitness.append(fitness)
+        return fitness
 
     def dimension_vec(self):
         """Return the encapsulated models dimension vector
@@ -128,7 +127,7 @@ class PSOHistory(Optimisable):
         pass
 
 
-    def plot_loss(self, particles=(0, 10)):
+    def plot_fitness(self, particles=(0, 10)):
         """Plot the fitness of each particle
 
         :param particles: The range of particles to plot, defaults to (0, 10)
@@ -138,6 +137,40 @@ class PSOHistory(Optimisable):
         for p in range(particles[0], particles[1]):
             plt.plot(
                 iterations, self.particle_fitness[p], label="particle " + str(p))
+
+        plt.title('Particles fitness change over iterations')
+        plt.xlabel('Iteration')
+        plt.ylabel('Fitness')
+        plt.legend()
+        plt.show()
+
+    def plot_fitness(self, particles=(0, 10)):
+        """Plot the fitness of each particle
+
+        :param particles: The range of particles to plot, defaults to (0, 10)
+        :type particles: tuple, optional
+        """
+        iterations = range(len(self.particle_fitness[particles[0]]))
+        for p in range(particles[0], particles[1]):
+            plt.plot(
+                iterations, self.particle_fitness[p], label="particle " + str(p))
+
+        plt.title('Particles fitness change over iterations')
+        plt.xlabel('Iteration')
+        plt.ylabel('Fitness')
+        plt.legend()
+        plt.show()
+
+    def plot_mean_fitness(self):
+        """Plot the fitness of each particle
+
+        :param particles: The range of particles to plot, defaults to (0, 10)
+        :type particles: tuple, optional
+        """
+        
+        line = np.mean(list(self.particle_fitness.values()), axis=0)
+        iterations = list(range(line.shape[0]))
+        plt.plot(iterations, line, label='mean of particles')
 
         plt.title('Particles fitness change over iterations')
         plt.xlabel('Iteration')

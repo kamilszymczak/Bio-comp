@@ -8,12 +8,15 @@ Requirements
 ============
 The **ANN & PSO** library has the following dependencies:
 
-- Python 3.8+
-- Numpy 1.19.1+
-- Matplotlib 3.3.2+
-- Pandas 1.1.3+
-- Scikit-learn 0.23.2+
-- tqdm 4.51.0+ 
+- Python 3.8
+- Numpy 1.19.1
+- Matplotlib 3.3.2
+- Pandas 1.1.3
+- Scikit-learn 0.23.2
+- tqdm 4.51.0
+- ipython 7.18.1
+- notebook 6.1.1
+- sphinx 3.2.1
 
 Installation
 ============

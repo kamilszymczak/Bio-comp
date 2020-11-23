@@ -1,14 +1,8 @@
 Coursework.ANNModel package
 ===========================
 
-Coursework.ANNModel.model module
---------------------------------
-
-.. automodule:: Coursework.ANNModel.model
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
+Submodules
+----------
 
 Coursework.ANNModel.activations module
 --------------------------------------
@@ -18,6 +12,13 @@ Coursework.ANNModel.activations module
    :undoc-members:
    :show-inheritance:
 
+Coursework.ANNModel.data module
+-------------------------------
+
+.. automodule:: Coursework.ANNModel.data
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Coursework.ANNModel.loss module
 -------------------------------
@@ -27,11 +28,10 @@ Coursework.ANNModel.loss module
    :undoc-members:
    :show-inheritance:
 
+Coursework.ANNModel.model module
+--------------------------------
 
-Coursework.ANNModel.data module
--------------------------------
-
-.. automodule:: Coursework.ANNModel.data
+.. automodule:: Coursework.ANNModel.model
    :members:
    :undoc-members:
    :show-inheritance:

@@ -10,6 +10,7 @@ Welcome to Biologically Inspired Computation Coursework's documentation!
    :maxdepth: 2
    :caption: Contents:
    
+   readme
    Coursework.ANNModel
    Coursework.PSO
 

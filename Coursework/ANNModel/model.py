@@ -361,7 +361,7 @@ class Layer:
     def set_bias(self, bias):
         """Sets biases for the layer
 
-        :param bias: Vector of biases for each neuron
+        :param bias: Vector of biases for the whole layer
         :type bias: numpy.array
         """
         self.bias = bias
@@ -370,7 +370,7 @@ class Layer:
     def set_weights(self, weights):
         """Sets weights for the layer
 
-        :param weights: [description]
+        :param weights: Matrix of weights for the layer
         :type weights: numpy.array
         """
         self.weights = weights

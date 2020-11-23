@@ -257,6 +257,7 @@ class ANN(Optimisable):
         """
         dimension_vec = []
         for layer in self.layers:
+            # excluding softmax which was added at a later stage, upper bound would be 6.4
             layer_vec = [[(-0.4, 5.4)]]
             if layer.use_bias:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
@@ -273,12 +274,9 @@ class ANN(Optimisable):
         :return: a fitness score
         :rtype: float
         """
-        #new_model = copy.deepcopy(self)
-        #new_model.decode_vec(vec)
-        #new_model.one_pass()
         self.decode_vec(vec)
         self.one_pass()
-        return 1/ self.loss + 0.0001 #new_model.loss
+        return 1/ self.loss + 0.0001
 
     
     def decode_vec(self, vec):

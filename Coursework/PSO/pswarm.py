@@ -66,11 +66,10 @@ class PSO(Optimisable):
         """Specify the function to use to calculate the fitness score
 
         :param fitness_function: a function object that can assess the fitness based on a vector
-        :type fitness_function: numpy.array -> bool
+        :type fitness_function: numpy.array -> float
         """
         self.fitness_fn = fitness_function
         #print(fitness_function)
-
 
 
     def set_search_dimensions(self, dimensions):

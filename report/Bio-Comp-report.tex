@@ -80,7 +80,7 @@ We used sphinx to generate documentation of the sourcecode, links to our \href{h
         \includegraphics[width=0.8\textwidth]{Examples.png} 
     \end{center}
     
-    \caption{Learning PSO hyperparameters with PSO for the complex dataset.}
+    \caption{Notable examples of PSO hyperparameters effecting fitness}
     \label{fig:ExamplePlots}   
 \end{figure}
 
@@ -198,28 +198,6 @@ To score the hyperparameters we used a subset of the input data from the and cal
 
 \section{Conclusion}
 
-\subsection{Discussion}
-
-\textbf{Observations from the experiment}
-
-
-The best ANN hyperparameters we observed appeared to be a result of running at least 12.5 million different ANN hyperparameter configurations each time we ran meta-PSO in an attempt to optimise the inner-PSO hyperparameters for a given dataset. 
-This suggests the highest performing ANN hyperparameters discovered during our search for good PSO hyperparameters were more due to reinitialising PSO so many times than actually finding some really good PSO hyperparameters.
-
-
-We frequently observed PSO getting stuck in local maxima, this is reflected by the disparity in table~\ref{tab:ExperimentResults} between the 10 run mean results and the results recorded from the best found during meta-PSO.
-Meta-PSO found a mean swarm size of 83 particles, this somewhat supports the observation that this is more of a brute force approach and (this implemenation) is very wasteful in terms of computation.
-
-
-We observed a significant improvement in fitness, and accuracy in the lower scoring neural networks when we added an appropriate number of neurons and layers to the neural network being optimised, however doing so did not guarentee that we could consistenly find the improved hyperparameters. 
-Figure~\ref{fig:approximationCurve} shows a sine function approximation that we found easily with 10 neurons in the hidden layer instead of 4, this had a 100\% accuracy score with 0 tolerance to error at 4 decimal places.
-
-
-A significant mitigating factor on more comprehensive testing were the performance issues with this implementation, the meta-PSO notebook in some cases would take up to an hour and a half per run even with the extremely conservative settings we chose (See Section~\ref{sec:experiment}).
-When plotting the mean fitness over all particles we could notice an upward trend such as in Figure~\ref{fig:complexpsolearning}, however any more than 10 particles and 50 iterations was impractical to run.
-The PSO classes run method in particular has substantial room for improvement, we suspect the performance issues are due to memory access bottlenecks but would need to investigate furthure to confirm this.
-
-
 \subsection{Further work}
 \textbf{Areas for improvement in the experiment:}
 \begin{itemize}
@@ -227,7 +205,7 @@ The PSO classes run method in particular has substantial room for improvement, w
     \item The fitness function we used was simply 1/loss, this was easy to implement but may have impacted the ability of PSO to escape local maximum. In future a alternative fitness functions should be investigated (perhaps one that scales linearly).
     \item During meta-PSO we only took the mean of 10 inner-PSO runs to evaluate the fitness of each inner-PSO hyperparameter configuration. More would have been better, but impractical in terms of time.
 \end{itemize}
-From the experimental results we have observed we feel future experiments should look closer at other fitness evaluation techniques. 
+From the experimental results we have observed, we feel future experiments should look closer at other fitness evaluation techniques. 
 An investigation into different hyperparameter search dimensions for both the ANN model and PSO would be interesting, some hyperparameters were found very quickly and it may be worth investigating if we could freeze those once they are found during optimiser runtime and reduce the search dimensions (careful consideration should be made with getting stuck in local maxima here). 
 
 A proper benchmark suite should be implemented to identify the serious bottlenecks in computation and memory access so we can begin to address them, and run more comprehensive experiments within a reasonable timeframe.
@@ -236,9 +214,27 @@ Likewise a unit testing suite would be helpful in idientifying any remaining bug
 Implementing PSO visualization tools to view how the hyperparameters are affecting the fitness in real-time would provide more insight into what is going on with particles during optimization. 
 This information might allow us to identify hyperparameters that tend to result in the particle being caught in local maxima.
 
-\subsection{Finally}
-Findings in~\autocite{garcia-nietoWhySixInformants2012,garcia-nietoEmpiricalComputationQuasioptimal2011} indicate that 6 to 8 informants is generally a good number of informants that each particle should have. 
-Our own findings support this.
+\subsection{Discussion}
+
+The best ANN hyperparameters we observed appeared to be a result of running at least 12.5 million different ANN hyperparameter configurations each time we ran meta-PSO in an attempt to optimise the inner-PSO hyperparameters for a given dataset. 
+This suggests the highest performing ANN hyperparameters discovered during our search for good PSO hyperparameters were more due to reinitialising PSO so many times than actually finding some really good PSO hyperparameters.
+
+
+Findings in~\autocite{garcia-nietoWhySixInformants2012,garcia-nietoEmpiricalComputationQuasioptimal2011} indicate that 6 to 8 informants is generally a good number of informants that each particle should have, our own findings support this as seen in Appendix~\ref{app:PSOconf} where the second index in each vector is a float representing the number of informants (when rounded), all have either 6 or 7 informants.
+
+
+We frequently observed PSO getting stuck in local maxima, this is reflected by the disparity in table~\ref{tab:ExperimentResults} between the 10 run mean results and the results recorded from the best found during meta-PSO. 
+Adjusting the proportion of velocity for each particle to retain and jump size helped to break out of these local maxima but also made the results far more erratic.
+Meta-PSO found a mean swarm size of 83 particles, this somewhat supports the observation that this is more of a brute force approach by trying many more possible starting points for each PSO we have a higher chance of finding a higher maximum.
+
+
+We could achieve a significant improvement in fitness, and accuracy in the lower scoring neural networks when we added an appropriate (for the specific function being approximated) number of neurons and layers to the neural network being optimised, however doing so did not guarentee that we would consistenly find those optimal ANN hyperparameters. 
+Figure~\ref{fig:approximationCurve} shows a sine function approximation that we found easily with 10 neurons in the hidden layer instead of 4, this had a 100\% accuracy score with 0 tolerance to error at 4 decimal places.
+
+
+A significant factor that prevented more thorough experments and more comprehensive testing were the performance issues with this implementation, the meta-PSO notebook in some cases would take up to an hour and a half per run even with the extremely conservative settings we chose (See Section~\ref{sec:experiment}).
+When plotting the mean fitness over all particles we could notice an upward trend such as in Figure~\ref{fig:complexpsolearning}, however any more than 10 particles and 50 iterations was impractical to run.
+The PSO classes run method in particular has substantial room for improvement, we suspect the performance issues are due to memory access bottlenecks but would need to investigate furthure to confirm this.
 
 \pagebreak
 \appendix

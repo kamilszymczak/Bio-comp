@@ -341,18 +341,38 @@ class Layer:
 
 
     def set_output(self, output):
+        """Sets layer's output attributes 
+
+        :param output: Vector of computed values from the layer
+        :type output: numpy.array
+        """
         self.output = output
 
 
     def set_input_dimension(self, input_dim):
+        """Sets the input dimension so the layer can correctly calculate the size of the weights matrix
+
+        :param input_dim: Number of elements from the output vector of the previous layer
+        :type input_dim: int
+        """
         self.input_dimension = input_dim
 
 
     def set_bias(self, bias):
+        """Sets biases for the layer
+
+        :param bias: Vector of biases for each neuron
+        :type bias: numpy.array
+        """
         self.bias = bias
     
 
     def set_weights(self, weights):
+        """Sets weights for the layer
+
+        :param weights: [description]
+        :type weights: numpy.array
+        """
         self.weights = weights
     
 

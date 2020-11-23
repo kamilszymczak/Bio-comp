@@ -142,11 +142,8 @@ class PSO(Optimisable):
         # update best
 
         for particle in self.particles:
-            
-            #if not all(v != 0 for v in iter(particle.velocity)):
-            #    continue
-            #if not any(particle.velocity != 0):
-            #    continue
+            if not any(particle.velocity != 0):
+               continue
 
             fitness = particle.assess_fitness()
 
@@ -161,8 +158,8 @@ class PSO(Optimisable):
         # It would be nice to optimise this
         for particle in self.particles:
             velocity = copy.deepcopy(particle.velocity)
-            #if not any(particle.velocity != 0):
-            #    continue
+            if not any(particle.velocity != 0):
+               continue
             particle.velocity_list.append(velocity)
             fittest_informant_loc = FitnessLoc([], -999999.0)
             for informant in particle.informants:
@@ -180,8 +177,8 @@ class PSO(Optimisable):
 
     def _move_particles(self):
         for particle in self.particles:
-            #if not any(particle.velocity != 0):
-            #    continue
+            if not any(particle.velocity != 0):
+               continue
 
             temp_position = particle.position + (self.epsilon*particle.velocity)
 
@@ -194,8 +191,7 @@ class PSO(Optimisable):
                         raise NotImplementedError
                         #! Bug below, self.boundary[index wont work]
                         distance_left = temp_position[index] - self.boundary[index]
-                        temp_position[index] = self.boundary[index] - \
-                            distance_left
+                        temp_position[index] = self.boundary[index] - distance_left
 
                     elif self.boundary_policy == BoundaryPolicy.RANDOMREINIT:
                         temp_position[index] = random.uniform(d[0], d[1])

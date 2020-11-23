@@ -166,3 +166,12 @@ class PSOHistory(Optimisable):
         plt.ylabel('Fitness')
         plt.legend()
         plt.show()
+
+    def plot_curve(self):
+        plt.title('Function approximation curve')
+        plt.xlabel('input')
+        plt.ylabel('output')
+        plt.scatter(self.model.input, self.model.y, alpha=0.4, label='truth')
+        plt.scatter(self.model.input, self.model.y_hat, alpha=0.4, label='prediction')
+        plt.legend()
+        plt.show()

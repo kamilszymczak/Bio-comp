@@ -257,6 +257,7 @@ class ANN(Optimisable):
         """
         dimension_vec = []
         for layer in self.layers:
+            # excluding softmax which was added at a later stage, upper bound would be 6.4
             layer_vec = [[(-0.4, 5.4)]]
             if layer.use_bias:
                 layer_vec.append([(-1.0, 1.0) for _ in range(layer.neurons)])
@@ -273,12 +274,9 @@ class ANN(Optimisable):
         :return: a fitness score
         :rtype: float
         """
-        #new_model = copy.deepcopy(self)
-        #new_model.decode_vec(vec)
-        #new_model.one_pass()
         self.decode_vec(vec)
         self.one_pass()
-        return 1/ self.loss + 0.0001 #new_model.loss
+        return 1/ self.loss + 0.0001
 
     
     def decode_vec(self, vec):
@@ -341,18 +339,38 @@ class Layer:
 
 
     def set_output(self, output):
+        """Sets layer's output attributes 
+
+        :param output: Vector of computed values from the layer
+        :type output: numpy.array
+        """
         self.output = output
 
 
     def set_input_dimension(self, input_dim):
+        """Sets the input dimension so the layer can correctly calculate the size of the weights matrix
+
+        :param input_dim: Number of elements from the output vector of the previous layer
+        :type input_dim: int
+        """
         self.input_dimension = input_dim
 
 
     def set_bias(self, bias):
+        """Sets biases for the layer
+
+        :param bias: Vector of biases for the whole layer
+        :type bias: numpy.array
+        """
         self.bias = bias
     
 
     def set_weights(self, weights):
+        """Sets weights for the layer
+
+        :param weights: Matrix of weights for the layer
+        :type weights: numpy.array
+        """
         self.weights = weights
     
 

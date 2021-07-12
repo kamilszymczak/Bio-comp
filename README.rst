@@ -1,5 +1,5 @@
 ###########################################
-Biologically Inspired Computing Coursework
+Particle Swarm Optimisation to search for weights in a neural network
 ###########################################
 
 In this repository we construct a fully connected artificial neural network from scratch and train it to approximate a pool of functions using particle swarm optimisation.
